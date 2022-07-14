@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<sdf version="1.5">
+  <world name="default">
+    <include>
+      <uri>model://ground_plane</uri>
+    </include>
+
+    <model name="cup">
+      <pose>0 0 0 0 0 0</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <mesh><uri>file://media/models/COLLADA/2073dd06f62b46d43c8079bde16af00d.dae</uri></mesh>
+          </geometry>
+        </collision>
+        <visual name="visual">
+            <mesh><uri>file://media/models/COLLADA/2073dd06f62b46d43c8079bde16af00d.dae</uri></mesh>
+        </visual>
+      </link>
+    </model>
+  </world>
+</sdf>
