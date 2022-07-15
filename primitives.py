@@ -9,15 +9,15 @@ import xml.etree.ElementTree as ET
 
 class Shape(ABC):
     @abstractmethod
-    def __init__(self, mass: float) -> None:
+    def __init__(self, mass: float):
         self.mass = mass
 
     @abstractmethod
-    def rand_dim(self) -> None:
+    def rand_dim(self):
         pass 
 
     @abstractmethod
-    def rand_pos(self) -> Pose:
+    def rand_pos(self):
         coord_1 = coord_2 = 0
         position = Point()
         
@@ -58,7 +58,7 @@ class Shape(ABC):
         
     
 class Box(Shape):
-    def __init__(self, length=0, width=0, height=0, mass=10) -> None:
+    def __init__(self, length=0, width=0, height=0, mass=10):
         super().__init__(mass)
         self.length = length
         self.width = width
@@ -88,7 +88,7 @@ class Box(Shape):
         tree.write("shape.urdf.xacro")
 
 class Sphere(Shape):
-    def __init__(self, radius=0, height=0, mass=10) -> None:
+    def __init__(self, radius=0, height=0, mass=10):
         super().__init__(mass)
         self.radius = radius
         self.height = height
