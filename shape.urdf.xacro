@@ -1,0 +1,95 @@
+<?xml version="1.0" ?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="box">
+  <xacro:property name="use_box"      value="false"   /> <!-- Should a box be spawned? -->
+  <xacro:property name="use_sphere"   value="false"   /> <!-- Should a sphere be spawned? -->
+  <xacro:property name="use_cylinder" value="false"   /> <!-- Should a cylinder be spawned? -->
+  <xacro:property name="length"       value="0"       /> <!-- What should the length of the box be? -->
+  <xacro:property name="width"        value="0"       /> <!-- What should the width of the box be? -->
+  <xacro:property name="height"       value="0"       /> <!-- What should the height of the box or the cylinder be? -->
+  <xacro:property name="radius"       value="0"       /> <!-- What should the radius of the sphere or cylinder be? -->
+  <xacro:property name="xyz"          value="0 0 0"   /> <!-- Where should the object be placed? -->
+  <xacro:property name="rpy"          value="0 0 0"   /> <!-- What is the orientation of the object? -->
+  <xacro:property name="mass"         value="10"      /> <!-- What is the mass of the object? -->
+  
+  <xacro:include filename="$(find objects)/utils.xacro" />
+
+  <xacro:if value="$(arg use_box)">
+    <link name="box"> 
+      <inertial>
+        <origin xyz="${xyz}" rpy="${rpy}" />
+        <mass value="${mass}" />
+        <cuboid_inertia_def width="${width}" height="${height}" length="${length}" mass="${mass}" />
+      </inertial>
+      <visual>
+        <origin xyz="${xyz}" rpy="${rpy}" />
+        <geometry>
+          <box size="${length} ${width} ${height}" />
+        </geometry>
+      </visual>
+      <collision>
+        <origin xyz="${xyz}" rpy="${rpy}" />
+        <geometry>
+          <box size="${length} ${width} ${height}" />
+        </geometry>
+      </collision>
+    </link>
+    <gazebo>
+      <material>Gazebo/Blue</material>
+      <static>true</static>
+    </gazebo>
+  </xacro:if> 
+
+  <xacro:if value="$(arg use_sphere)">
+    <link name="sphere"> 
+      <inertial>
+        <origin xyz="${xyz}" rpy="${rpy}" />
+        <mass value="${mass}" />
+        <sphere_inertia_def radius="${radius}" mass="${mass}" />
+      </inertial>
+      <visual>
+        <origin xyz="${xyz}" rpy="${rpy}" />
+        <geometry>
+          <sphere radius="${radius}" />
+        </geometry>
+      </visual>
+      <collision>
+        <origin xyz="${xyz}" rpy="${rpy}" />
+        <geometry>
+          <sphere radius="${radius}" />
+        </geometry>
+      </collision>
+    </link>
+    <gazebo>
+      <material>Gazebo/Blue</material>
+      <static>true</static>
+    </gazebo>
+  </xacro:if> 
+
+  
+  <xacro:if value="$(arg use_cylinder)">
+    <link name="cylinder"> 
+      <inertial>
+        <origin xyz="${xyz}" rpy="${rpy}" />
+        <mass value="${mass}" />
+        <cylinder_inertia_def radius="${radius}" height="${height}" mass="${mass}" />
+      </inertial>
+      <visual>
+        <origin xyz="${xyz}" rpy="${rpy}" />
+        <geometry>
+          <cylinder radius="${radius}" height="${height}"/>
+        </geometry>
+      </visual>
+      <collision>
+        <origin xyz="${xyz}" rpy="${rpy}" />
+        <geometry>
+          <cylinder radius="${radius}" height="${height}"/>
+        </geometry>
+      </collision>
+    </link>
+    <gazebo>
+      <material>Gazebo/Blue</material>
+      <static>true</static>
+    </gazebo>
+  </xacro:if> 
+</robot>
+<xml>
