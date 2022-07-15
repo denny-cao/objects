@@ -9,7 +9,7 @@ import xml.etree.ElementTree as ET
 
 class Shape(ABC):
     @abstractmethod
-    def __init__(self, mass: float):
+    def __init__(self, mass):
         self.mass = mass
 
     @abstractmethod
