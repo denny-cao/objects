@@ -76,13 +76,13 @@ class Box(Shape):
         self.height = random.uniform(0.005, 0.5)
 
     def rand_pos(self):
-        position = super(Shape, self).rand_pos()
+        position = super().rand_pos()
         position.z = self.height / 2
 
         return position
 
     def show(self):
-        tree = super(Shape, self).show()
+        tree = super().show()
 
         tree.find('xacro:property[@name="use_box"]').set("value", "true")
         tree.find('xacro:property[@name="use_cylinder"]').set("value", "false")
@@ -108,13 +108,13 @@ class Sphere(Shape):
         self.height = random.uniform(0.0025, 0.25)
 
     def rand_pos(self):
-        position = super(Shape, self).rand_pos()
+        position = super().rand_pos()
         position.z = self.radius
 
         return position
 
     def show(self):
-        tree = super(Shape, self).show()
+        tree = super().show()
 
         tree.find('xacro:property[@name="use_sphere"]').set("value", "true")
         tree.find('xacro:property[@name="use_box"]').set("value", "false")
@@ -134,13 +134,13 @@ class Cylinder(Shape):
         self.radius = random.uniform(0.0025, 0.25)
 
     def rand_pos(self):
-        position = super(Shape, self).rand_pos()
+        position = super().rand_pos()
         position.z = self.height / 2
 
         return position
 
     def show(self):
-        tree = super(Shape, self).show()
+        tree = super().show()
 
         tree.find('xacro:property[@name="use_cylinder"]').set("value", "true")
         tree.find('xacro:property[@name="use_sphere"]').set("value", "false")
