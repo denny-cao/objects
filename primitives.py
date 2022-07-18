@@ -3,22 +3,17 @@ from random import choice
 import rospy as rs
 from gazebo_msgs.srv import SpawnModel, SpawnModelRequest, DeleteModel, DeleteModelRequest
 from geometry_msgs.msg import Pose, Point, Quaternion
-from abc import ABCMeta, abstractmethod
 import xml.etree.ElementTree as ET
 
 
 class Shape():
-    __metaclass__ = ABCMeta
 
-    @abstractmethod
     def __init__(self, mass=10):
         self.mass = mass
 
-    @abstractmethod
     def rand_dim(self):
         pass
 
-    @abstractmethod
     def rand_pos(self):
         coord_1 = coord_2 = 0
         position = Point()
@@ -50,7 +45,6 @@ class Shape():
 
         return Pose(position=position, orientation=orientation)
 
-    @abstractmethod
     def show(self):
         tree = ET.parse("shape.urdf.xacro")
         tree.find('xacro:property[@name="mass"]').set("value", str(self.mass))
@@ -76,13 +70,13 @@ class Box(Shape):
         self.height = random.uniform(0.005, 0.5)
 
     def rand_pos(self):
-        position = super().rand_pos()
+        position = super(Shape, self).rand_pos()
         position.z = self.height / 2
 
         return position
 
     def show(self):
-        tree = super().show()
+        tree = super(Shape, self).show()
 
         tree.find('xacro:property[@name="use_box"]').set("value", "true")
         tree.find('xacro:property[@name="use_cylinder"]').set("value", "false")
@@ -108,13 +102,13 @@ class Sphere(Shape):
         self.height = random.uniform(0.0025, 0.25)
 
     def rand_pos(self):
-        position = super().rand_pos()
+        position = super(Shape, self).rand_pos()
         position.z = self.radius
 
         return position
 
     def show(self):
-        tree = super().show()
+        tree = super(Shape, self).show()
 
         tree.find('xacro:property[@name="use_sphere"]').set("value", "true")
         tree.find('xacro:property[@name="use_box"]').set("value", "false")
@@ -134,13 +128,13 @@ class Cylinder(Shape):
         self.radius = random.uniform(0.0025, 0.25)
 
     def rand_pos(self):
-        position = super().rand_pos()
+        position = super(Shape, self).rand_pos()
         position.z = self.height / 2
 
         return position
 
     def show(self):
-        tree = super().show()
+        tree = super(Shape, self).show()
 
         tree.find('xacro:property[@name="use_cylinder"]').set("value", "true")
         tree.find('xacro:property[@name="use_sphere"]').set("value", "false")
