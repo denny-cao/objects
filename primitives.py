@@ -51,7 +51,7 @@ class Shape(object):
         pose = self.rand_pos()
         position = pose.position
         orientation = pose.orientation
-        
+
         tree.find('xacro:property[@name="xyz"]', namespaces).set("value",
                                                      str(position.x) + " " + str(position.y) + " " + str(position.z))
 
@@ -114,7 +114,7 @@ class Sphere(Shape):
         self.height = random.uniform(0.0025, 0.25)
 
     def rand_pos(self):
-        position, pose = super(Box, self).rand_pos()
+        position, pose = super(Sphere, self).rand_pos()
 
         position.x, position.y = super(Sphere, self).same_len()
         position.z = self.radius
