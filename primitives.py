@@ -8,17 +8,12 @@ import xml.etree.ElementTree as ET
 
 
 class Shape:
-    __metaclass__ = ABCMeta
-
-    @abstractmethod
     def __init__(self, mass=10):
         self.mass = mass
 
-    @abstractmethod
     def rand_dim(self):
         pass
 
-    @abstractmethod
     def rand_pos(self):
         coord_1 = coord_2 = 0
         position = Point()
