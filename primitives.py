@@ -30,7 +30,7 @@ class Shape(object):
                           random.uniform(-0.85, -0.2)])
         coord_2 = random.uniform(-0.85, 0.85)
 
-        if choice[0, 1]:
+        if choice([0, 1]):
             return coord_1, coord_2
         else:
             return coord_2, coord_1
@@ -169,7 +169,7 @@ class Cylinder(Shape):
         tree = super(Cylinder, self).show()
 
         tree.find('xacro:property[@name="use_cylinder"]', namespaces).set("value", "true")
-        tree.find('{xacro:property[@name="use_sphere"]', namespaces).set("value", "false")
+        tree.find('xacro:property[@name="use_sphere"]', namespaces).set("value", "false")
         tree.find('xacro:property[@name="use_box"]', namespaces).set("value", "false")
         tree.find(
             'xacro:property[@name="radius"]', namespaces).set("value", str(self.radius))
