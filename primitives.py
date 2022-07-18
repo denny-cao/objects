@@ -44,7 +44,7 @@ class Shape(object):
         return coord_1, coord_2
 
     @abstractmethod
-    def show(self):
+    def show(self, truth_table):
         tree = ET.parse("shape.urdf.xacro")
         tree.find('xacro:property[@name="mass"]', namespaces).set("value", str(self.mass))
 
@@ -54,6 +54,10 @@ class Shape(object):
 
         tree.find('xacro:property[@name="xyz"]', namespaces).set("value",
                                                      str(position.x) + " " + str(position.y) + " " + str(position.z))
+
+        tree.find('xacro:property[@name="use_box"]', namespaces).set("value", truth_table["box"])
+        tree.find('xacro:property[@name="use_cylinder"]', namespaces).set("value", truth_table["cylinder"])
+        tree.find('xacro:property[@name="use_sphere"]', namespaces).set("value", truth_table["sphere"])
 
         return tree
 
@@ -88,11 +92,12 @@ class Box(Shape):
         return pose
     
     def show(self):
-        tree = super(Box, self).show()
+        tree = super(Box, self).show(truth_table={
+            "box": "true",
+            "sphere": "false",
+            "cylinder": "false"
+        })
 
-        tree.find('xacro:property[@name="use_box"]', namespaces).set("value", "true")
-        tree.find('xacro:property[@name="use_cylinder"]', namespaces).set("value", "false")
-        tree.find('xacro:property[@name="use_sphere"]', namespaces).set("value", "false")
         tree.find(
             'xacro:property[@name="length"]', namespaces).set("value", str(self.length))
         tree.find(
@@ -124,11 +129,12 @@ class Sphere(Shape):
         return pose
 
     def show(self):
-        tree = super(Sphere, self).show()
+        tree = super(Sphere, self).show(truth_table={
+            "box": "false",
+            "sphere": "true",
+            "cylinder": "false"
+        })
 
-        tree.find('xacro:property[@name="use_sphere"]', namespaces).set("value", "true")
-        tree.find('xacro:property[@name="use_box"]', namespaces).set("value", "false")
-        tree.find('xacro:property[@name="use_cylinder"]', namespaces).set("value", "false")
         tree.find(
             'xacro:property[@name="radius"]', namespaces).set("value", str(self.radius))
 
@@ -166,11 +172,12 @@ class Cylinder(Shape):
 
 
     def show(self):
-        tree = super(Cylinder, self).show()
+        tree = super(Cylinder, self).show(truth_table={
+            "box": "true",
+            "sphere": "false",
+            "cylinder": "true"
+        })
 
-        tree.find('xacro:property[@name="use_cylinder"]', namespaces).set("value", "true")
-        tree.find('xacro:property[@name="use_sphere"]', namespaces).set("value", "false")
-        tree.find('xacro:property[@name="use_box"]', namespaces).set("value", "false")
         tree.find(
             'xacro:property[@name="radius"]', namespaces).set("value", str(self.radius))
         tree.find(
