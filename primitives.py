@@ -2,7 +2,7 @@ from numpy import random
 from random import choice
 import rospy as rs
 from gazebo_msgs.srv import SpawnModel, SpawnModelRequest, DeleteModel, DeleteModelRequest
-from geometry_msgs.msg import Pose, Point, Quaternion
+from geometry_msgs.msg import Point
 from abc import ABCMeta, abstractmethod
 import xml.etree.ElementTree as ET
 
@@ -22,7 +22,7 @@ class Shape(object):
     
     @abstractmethod
     def rand_pos(self):
-        return Point(), Pose(orientation=Quaternion(x=0.0, y=0.0, z=0.0, w=0.0))
+        pass
 
     def same_len(self):
         # Restrict 50/50 axis if length and width are the same
@@ -48,9 +48,7 @@ class Shape(object):
         tree = ET.parse("shape.urdf.xacro")
         tree.find('xacro:property[@name="mass"]', namespaces).set("value", str(self.mass))
 
-        pose = self.rand_pos()
-        position = pose.position
-        orientation = pose.orientation
+        position = self.rand_pos()
 
         tree.find('xacro:property[@name="xyz"]', namespaces).set("value",
                                                      str(position.x) + " " + str(position.y) + " " + str(position.z))
@@ -75,7 +73,8 @@ class Box(Shape):
         self.height = random.uniform(0.005, 0.5)
 
     def rand_pos(self):
-        position, pose = super(Box, self).rand_pos()
+        position = Point()
+
         if self.length == self.width:
             position.x, position.y = super(Box, self).same_len()
         
@@ -86,10 +85,8 @@ class Box(Shape):
                 position.y, position.x = super(Box, self).diff_len()
         
         position.z = self.height / 2
-
-        pose.position = position
         
-        return pose
+        return position
     
     def show(self):
         tree = super(Box, self).show(truth_table={
@@ -119,14 +116,12 @@ class Sphere(Shape):
         self.height = random.uniform(0.0025, 0.25)
 
     def rand_pos(self):
-        position, pose = super(Sphere, self).rand_pos()
+        position = Point()
 
         position.x, position.y = super(Sphere, self).same_len()
-        position.z = self.radius
-
-        pose.position = position
-        
-        return pose
+        position.z = self.radius        
+      
+        return position
 
     def show(self):
         tree = super(Sphere, self).show(truth_table={
@@ -155,20 +150,12 @@ class Cylinder(Shape):
         self.height = random.uniform(0.0025, 0.25)
 
     def rand_pos(self):
-        position, pose = super(Cylinder, self).rand_pos()
+        position = Point()
 
-        if self.diameter() == self.height:
-            position.x, position.y = super(Cylinder, self).same_len()
+        position.x, position.y = super(Cylinder, self).same_len()
+        position.z = self.height / 2
         
-        else:
-            if  self.height > self.diameter():
-                position.x, position.y = super(Cylinder, self).diff_len()
-            else:
-                position.y, position.x = super(Cylinder, self).diff_len()
-
-        pose.position = position
-        
-        return pose
+        return position
 
 
     def show(self):
