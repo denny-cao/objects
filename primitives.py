@@ -3,17 +3,22 @@ from random import choice
 import rospy as rs
 from gazebo_msgs.srv import SpawnModel, SpawnModelRequest, DeleteModel, DeleteModelRequest
 from geometry_msgs.msg import Pose, Point, Quaternion
+from abc import ABCMeta, abstractmethod
 import xml.etree.ElementTree as ET
 
 
-class Shape():
+class Shape:
+    __metaclass__ = ABCMeta
 
+    @abstractmethod
     def __init__(self, mass=10):
         self.mass = mass
 
+    @abstractmethod
     def rand_dim(self):
         pass
 
+    @abstractmethod
     def rand_pos(self):
         coord_1 = coord_2 = 0
         position = Point()
@@ -45,6 +50,7 @@ class Shape():
 
         return Pose(position=position, orientation=orientation)
 
+    @abstractmethod
     def show(self):
         tree = ET.parse("shape.urdf.xacro")
         tree.find('xacro:property[@name="mass"]').set("value", str(self.mass))
