@@ -6,7 +6,7 @@ from geometry_msgs.msg import Pose, Point, Quaternion
 from abc import ABCMeta, abstractmethod
 import xml.etree.ElementTree as ET
 
-namespaces = {"xml": "http://www.ros.org/wiki/xacro"}
+namespaces = {"xacro": "http://www.ros.org/wiki/xacro"}
 
 
 class Shape(object):
