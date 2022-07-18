@@ -6,6 +6,8 @@ from geometry_msgs.msg import Pose, Point, Quaternion
 from abc import ABCMeta, abstractmethod
 import xml.etree.ElementTree as ET
 
+namespaces = {"xml": "http://www.ros.org/wiki/xacro"}
+
 
 class Shape(object):
     __metaclass__ = ABCMeta
@@ -53,11 +55,11 @@ class Shape(object):
     @abstractmethod
     def show(self):
         tree = ET.parse("shape.urdf.xacro")
-        tree.find('{xacro}property[@name="mass"]').set("value", str(self.mass))
+        tree.find('xacro:property[@name="mass"]', namespaces).set("value", str(self.mass))
 
         position = self.rand_pos()
 
-        tree.find('{xacro}:property[@name="xyz"]').set("value",
+        tree.find('xacro:property[@name="xyz"]', namespaces).set("value",
                                                      str(position.x) + " " + str(position.y) + " " + str(position.z))
 
         return tree
@@ -84,15 +86,15 @@ class Box(Shape):
     def show(self):
         tree = super(Box, self).show()
 
-        tree.find('{xacro}property[@name="use_box"]').set("value", "true")
-        tree.find('{xacro}property[@name="use_cylinder"]').set("value", "false")
-        tree.find('{xacro}property[@name="use_sphere"]').set("value", "false")
+        tree.find('xacro:property[@name="use_box"]', namespaces).set("value", "true")
+        tree.find('xacro:property[@name="use_cylinder"]', namespaces).set("value", "false")
+        tree.find('xacro:property[@name="use_sphere"]', namespaces).set("value", "false")
         tree.find(
-            '{xacro}property[@name="length"]').set("value", str(self.length))
+            'xacro:property[@name="length"]', namespaces).set("value", str(self.length))
         tree.find(
-            '{xacro}property[@name="width"]').set("value", str(self.width))
+            'xacro:property[@name="width"]', namespaces).set("value", str(self.width))
         tree.find(
-            '{xacro}property[@name="height"]').set("value", str(self.height))
+            'xacro:property[@name="height"]', namespaces).set("value", str(self.height))
 
         tree.write("shape.urdf.xacro")
 
@@ -116,11 +118,11 @@ class Sphere(Shape):
     def show(self):
         tree = super(Sphere, self).show()
 
-        tree.find('{xacro}property[@name="use_sphere"]').set("value", "true")
-        tree.find('{xacro}property[@name="use_box"]').set("value", "false")
-        tree.find('{xacro}property[@name="use_cylinder"]').set("value", "false")
+        tree.find('xacro:property[@name="use_sphere"]', namespaces).set("value", "true")
+        tree.find('xacro:property[@name="use_box"]', namespaces).set("value", "false")
+        tree.find('xacro:property[@name="use_cylinder"]', namespaces).set("value", "false")
         tree.find(
-            '{xacro}property[@name="radius"]').set("value", str(self.radius))
+            'xacro:property[@name="radius"]', namespaces).set("value", str(self.radius))
 
         tree.write("shape.urdf.xacro")
 
@@ -142,13 +144,13 @@ class Cylinder(Shape):
     def show(self):
         tree = super(Cylinder, self).show()
 
-        tree.find('{xacro}property[@name="use_cylinder"]').set("value", "true")
-        tree.find('{xacro}property[@name="use_sphere"]').set("value", "false")
-        tree.find('{xacro}property[@name="use_box"]').set("value", "false")
+        tree.find('xacro:property[@name="use_cylinder"]', namespaces).set("value", "true")
+        tree.find('{xacro:property[@name="use_sphere"]', namespaces).set("value", "false")
+        tree.find('xacro:property[@name="use_box"]', namespaces).set("value", "false")
         tree.find(
-            '{xacro}property[@name="radius"]').set("value", str(self.radius))
+            'xacro:property[@name="radius"]', namespaces).set("value", str(self.radius))
         tree.find(
-            '{xacro}property[@name="height"]').set("value", str(self.height))
+            'xacro:property[@name="height"]', namespaces).set("value", str(self.height))
 
         tree.write("shape.urdf.xacro")
 
