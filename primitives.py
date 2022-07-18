@@ -52,7 +52,8 @@ class Shape(ABC):
         
         position = self.rand_pos()
 
-        tree.find('xacro:property[@name="xyz"]').set("value", f"{position.x} {position.y} {position.z}")
+        tree.find('xacro:property[@name="xyz"]').set("value", str(position.x) + " " + str(position.y) + " " + str(position.z))
+        
 
         return tree
         
