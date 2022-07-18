@@ -3,11 +3,13 @@ from random import choice
 import rospy as rs
 from gazebo_msgs.srv import SpawnModel, SpawnModelRequest, DeleteModel, DeleteModelRequest
 from geometry_msgs.msg import Pose, Point, Quaternion
-from abc import ABC, abstractmethod
+from abc import ABCMeta, abstractmethod
 import xml.etree.ElementTree as ET
 
 
-class Shape(ABC):
+class Shape():
+    __metaclass__ = ABCMeta
+    
     @abstractmethod
     def __init__(self, mass):
         self.mass = mass
