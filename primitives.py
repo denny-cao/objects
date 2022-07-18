@@ -65,7 +65,7 @@ class Shape():
 
 class Box(Shape):
     def __init__(self, length=0, width=0, height=0, mass=10):
-        super().__init__()
+        super(Shape, self).__init__()
         self.length = length
         self.width = width
         self.height = height
@@ -99,7 +99,7 @@ class Box(Shape):
 
 class Sphere(Shape):
     def __init__(self, radius=0, height=0, mass=10):
-        super().__init__()
+        super(Shape, self).__init__()
         self.radius = radius
         self.height = height
 
@@ -127,7 +127,7 @@ class Sphere(Shape):
 
 class Cylinder(Shape):
     def __init__(self, radius=0, mass=10):
-        super().__init__()
+        super(Shape, self).__init__()
         self.radius = radius
 
     def rand_dim(self):
