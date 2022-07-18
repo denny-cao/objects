@@ -48,8 +48,10 @@ class Shape(object):
         tree = ET.parse("shape.urdf.xacro")
         tree.find('xacro:property[@name="mass"]', namespaces).set("value", str(self.mass))
 
-        position = self.rand_pos()
-
+        pose = self.rand_pos()
+        position = pose.position
+        orientation = pose.orientation
+        
         tree.find('xacro:property[@name="xyz"]', namespaces).set("value",
                                                      str(position.x) + " " + str(position.y) + " " + str(position.z))
 
