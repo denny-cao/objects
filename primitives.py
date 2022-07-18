@@ -22,35 +22,26 @@ class Shape(object):
     
     @abstractmethod
     def rand_pos(self):
-        coord_1 = coord_2 = 0
-        position = Point()
+        return Point(), Pose(orientation=Quaternion(x=0.0, y=0.0, z=0.0, w=0.0))
 
-        # Restrict both axes
-        if self.length == self.width:
-            coord_1 = choice([random.uniform(0.2, 0.85),
-                             random.uniform(-0.85, -0.2)])
-            coord_2 = choice([random.uniform(0.2, 0.85),
-                             random.uniform(-0.85, -0.2)])
+    def same_len(self):
+        # Restrict 50/50 axis if length and width are the same
+        coord_1 = choice([random.uniform(0.2, 0.85),
+                          random.uniform(-0.85, -0.2)])
+        coord_2 = random.uniform(-0.85, 0.85)
 
-            position.x, position.y = coord_1, coord_2
-
-        # Restrict one axis
+        if choice[0, 1]:
+            return coord_1, coord_2
         else:
-            coord_1 = choice([random.uniform(0.2, 0.85),
-                             random.uniform(-0.85, -0.2)])
-            coord_2 = random.uniform(-0.85, 0.85)
+            return coord_2, coord_1
+    
+    def diff_len(self): 
+        # Resrict shortest side
+        coord_1 = choice([random.uniform(0.2, 0.85),
+                          random.uniform(-0.85, -0.2)])
+        coord_2 = random.uniform(-0.85, 0.85)
 
-            # Restrict x-values
-            if self.length > self.width:
-                position.x, position.y = coord_1, coord_2
-
-            # Restrict y-values
-            else:
-                position.x, position.y = coord_2, coord_1
-
-        orientation = Quaternion(x=0.0, y=0.0, z=0.0, w=1.0)
-
-        return Pose(position=position, orientation=orientation)
+        return coord_1, coord_2
 
     @abstractmethod
     def show(self):
@@ -78,11 +69,22 @@ class Box(Shape):
         self.height = random.uniform(0.005, 0.5)
 
     def rand_pos(self):
-        position = super(Box, self).rand_pos()
+        position, pose = super(Box, self).rand_pos()
+        if self.length == self.width:
+            position.x, position.y = super(Box, self).same_len()
+        
+        else:
+            if self.length > self.width:
+                position.x, position.y = super(Box, self).diff_len()
+            else:
+                position.y, position.x = super(Box, self).diff_len()
+        
         position.z = self.height / 2
 
-        return position
-
+        pose.position = position
+        
+        return pose
+    
     def show(self):
         tree = super(Box, self).show()
 
@@ -110,10 +112,14 @@ class Sphere(Shape):
         self.height = random.uniform(0.0025, 0.25)
 
     def rand_pos(self):
-        position = super(Sphere, self).rand_pos()
+        position, pose = super(Box, self).rand_pos()
+
+        position.x, position.y = super(Sphere, self).same_len()
         position.z = self.radius
 
-        return position
+        pose.position = position
+        
+        return pose
 
     def show(self):
         tree = super(Sphere, self).show()
@@ -128,18 +134,34 @@ class Sphere(Shape):
 
 
 class Cylinder(Shape):
-    def __init__(self, radius=0, mass=10):
+    def __init__(self, radius=0, height=0, mass=10):
         super(Cylinder, self).__init__()
         self.radius = radius
+        self.height = height
+
+    def diameter(self):
+        return self.radius * 2
 
     def rand_dim(self):
         self.radius = random.uniform(0.0025, 0.25)
+        self.height = random.uniform(0.0025, 0.25)
 
     def rand_pos(self):
-        position = super(Cylinder, self).rand_pos()
-        position.z = self.height / 2
+        position, pose = super(Cylinder, self).rand_pos()
 
-        return position
+        if self.diameter() == self.height:
+            position.x, position.y = super(Cylinder, self).same_len()
+        
+        else:
+            if  self.height > self.diameter():
+                position.x, position.y = super(Cylinder, self).diff_len()
+            else:
+                position.y, position.x = super(Cylinder, self).diff_len()
+
+        pose.position = position
+        
+        return pose
+
 
     def show(self):
         tree = super(Cylinder, self).show()
