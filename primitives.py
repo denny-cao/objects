@@ -153,7 +153,6 @@ def rand_shape():
     shape = choice([Box(), Sphere(), Cylinder()])
     
     shape.rand_dim()
-    shape.rand_pos()
 
     shape.show()
 
