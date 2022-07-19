@@ -45,9 +45,9 @@ class Shape(object):
         # Restrict 50/50 axis if length and width are the same
         coord_1 = choice([round(random.uniform(MIN_COORD + dist, MAX_COORD + dist), ndgits=4),
                           round(random.uniform(-MAX_COORD - dist, -MIN_COORD - dist), ndigits=4)])
-        coord_2 = random.uniform(-MAX_COORD - dist, MAX_COORD + dist)
+        coord_2 = round(random.uniform(-MAX_COORD - dist, MAX_COORD + dist), ndigits=4)
 
-        (self.x, self.y) = (coord_1, coord_2) if choice([0, 1]) else (coord_2, coord_1)
+        self.x, self.y = (coord_1, coord_2) if choice([0, 1]) else (coord_2, coord_1)
 
 class Box(Shape):
     def __init__(self, length=0, width=0, height=0, mass=10):
