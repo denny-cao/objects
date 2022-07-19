@@ -1,8 +1,6 @@
 <?xml version="1.0" ?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="box">
-  <xacro:property name="use_box"      value="false"   /> <!-- Should a box be spawned? -->
-  <xacro:property name="use_sphere"   value="false"   /> <!-- Should a sphere be spawned? -->
-  <xacro:property name="use_cylinder" value="false"   /> <!-- Should a cylinder be spawned? -->
+  <xacro:property name="shape_name"   value="box"     /> <!-- What shape should be spawned? -->
   <xacro:property name="length"       value="0"       /> <!-- What should the length of the box be? -->
   <xacro:property name="width"        value="0"       /> <!-- What should the width of the box be? -->
   <xacro:property name="height"       value="0"       /> <!-- What should the height of the box or the cylinder be? -->
@@ -13,7 +11,7 @@
   
   <xacro:include filename="$(find objects)/utils.xacro" />
 
-  <xacro:if value="${use_box}">
+  <xacro:if value="${shape_name == 'Box'}">
     <link name="box"> 
       <inertial>
         <origin xyz="${xyz}" rpy="${rpy}" />
@@ -39,7 +37,7 @@
     </gazebo>
   </xacro:if> 
 
-  <xacro:if value="${use_sphere}">
+  <xacro:if value="${shape_name == 'Sphere'}">
     <link name="sphere"> 
       <inertial>
         <origin xyz="${xyz}" rpy="${rpy}" />
@@ -66,7 +64,7 @@
   </xacro:if> 
 
   
-  <xacro:if value="${use_cylinder}">
+  <xacro:if value="${shape_name == 'Cylinder'}">
     <link name="cylinder"> 
       <inertial>
         <origin xyz="${xyz}" rpy="${rpy}" />
@@ -91,4 +89,11 @@
       <static>true</static>
     </gazebo>
   </xacro:if> 
+
+  <link name="world" />
+    <joint name="world_joint" type="fixed">
+      <origin xyz="${xyz}" rpy="${rpy}" />
+      <parent link="world" />
+      <child link="${shape_name}" />
+    </joint>
 </robot>

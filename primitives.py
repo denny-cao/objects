@@ -32,18 +32,13 @@ class Shape(object):
         pass
 
     @abstractmethod
-    def show(self, truth_table):
+    def show(self):
         tree = ET.parse("shape.urdf.xacro")
+
         tree.find('xacro:property[@name="mass"]', namespaces).set("value", str(self.mass))
-
-
         tree.find('xacro:property[@name="xyz"]', namespaces).set("value",
                                                      str(self.x) + " " + str(self.y) + " " + str(self.z))
-
-        tree.find('xacro:property[@name="use_box"]', namespaces).set("value", truth_table["box"])
-        tree.find('xacro:property[@name="use_cylinder"]', namespaces).set("value", truth_table["cylinder"])
-        tree.find('xacro:property[@name="use_sphere"]', namespaces).set("value", truth_table["sphere"])
-
+        tree.find('xacro:property[@name="shape_name"]', namespaces).set("value", self.__class__.__name__)
         return tree
     
     def same_len(self, dist):
@@ -83,12 +78,7 @@ class Box(Shape):
             self.y =  random.uniform(min_coord + self.length, max_coord + self.length) if choice([0, 1]) else random.uniform(-max_coord - self.length, -min_coord - self.length)
 
     def show(self):
-        tree = super(Box, self).show(truth_table={
-            "box": "true",
-            "sphere": "false",
-            "cylinder": "false"
-        })
-
+        tree = super(Box, self).show()
         tree.find(
             'xacro:property[@name="length"]', namespaces).set("value", str(self.length))
         tree.find(
@@ -139,12 +129,7 @@ class Cylinder(Shape):
         self.length = random.uniform(min_dim / 2, max_dim / 2)
 
     def rand_pos(self):
-        position = Point()
-
-        position.x, position.y = super(Cylinder, self).same_len()
-        position.z = self.length / 2
-        
-        return position
+        super(Cylinder, self).same_len(self.radius)
 
 
     def show(self):
