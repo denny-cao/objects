@@ -1,4 +1,3 @@
-from turtle import width
 from numpy import random
 from random import choice
 import rospy
@@ -77,7 +76,7 @@ class Box(Shape):
         if abs(self.x) - self.width / 2 < MIN_COORD:
             self.y =  round(random.uniform(MIN_COORD + self.length, MAX_COORD + self.length), ndgits=4) if choice([0, 1]) else round(random.uniform(-MAX_COORD - self.length, -MIN_COORD - self.length), ndgits=4)
         else:
-            self.y = round(random.uniform(-MIN_COORD - self.length, MAX_COORD + self.length))
+            self.y = round(random.uniform(-MIN_COORD - self.length, MAX_COORD + self.length), ndigits=4)
     def show(self):
         tree = super(Box, self).show()
         tree.find(
