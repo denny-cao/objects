@@ -9,6 +9,12 @@ import xml.etree.ElementTree as ET
 namespaces = {"xacro": "http://www.ros.org/wiki/xacro"}
 ET.register_namespace("xacro", "http://www.ros.org/wiki/xacro")
 
+max_coord = 0.5
+min_coord = 0.1
+
+max_dim = 0.4
+min_dim = 0.005
+
 class Shape(object):
     __metaclass__ = ABCMeta
 
@@ -26,9 +32,9 @@ class Shape(object):
 
     def same_len(self):
         # Restrict 50/50 axis if length and width are the same
-        coord_1 = choice([random.uniform(0.2, 0.85),
-                          random.uniform(-0.85, -0.2)])
-        coord_2 = random.uniform(-0.85, 0.85)
+        coord_1 = choice([random.uniform(min_coord, max_coord),
+                          random.uniform(-max_coord, -min_coord)])
+        coord_2 = random.uniform(-max_coord, max_coord)
 
         if choice([0, 1]):
             return coord_1, coord_2
@@ -37,9 +43,9 @@ class Shape(object):
     
     def diff_len(self): 
         # Resrict shortest side
-        coord_1 = choice([random.uniform(0.2, 0.85),
-                          random.uniform(-0.85, -0.2)])
-        coord_2 = random.uniform(-0.85, 0.85)
+        coord_1 = choice([random.uniform(min_coord, max_coord),
+                          random.uniform(-max_coord, -min_coord)])
+        coord_2 = random.uniform(-max_coord, max_coord)
 
         return coord_1, coord_2
 
@@ -68,9 +74,9 @@ class Box(Shape):
         self.height = height
 
     def rand_dim(self):
-        self.length = random.uniform(0.005, 0.5)
-        self.width = random.uniform(0.005, 0.5)
-        self.height = random.uniform(0.005, 0.5)
+        self.length = random.uniform(min_dim, max_dim)
+        self.width = random.uniform(min_dim, max_dim)
+        self.height = random.uniform(min_dim, max_dim)
 
     def rand_pos(self):
         position = Point()
@@ -106,14 +112,12 @@ class Box(Shape):
 
 
 class Sphere(Shape):
-    def __init__(self, radius=0, height=0, mass=10):
+    def __init__(self, radius=0, mass=10):
         super(Sphere, self).__init__()
         self.radius = radius
-        self.height = height
 
     def rand_dim(self):
-        self.radius = random.uniform(0.0025, 0.25)
-        self.height = random.uniform(0.0025, 0.25)
+        self.radius = random.uniform(min_dim / 2, max_dim / 2)
 
     def rand_pos(self):
         position = Point()
@@ -146,8 +150,8 @@ class Cylinder(Shape):
         return self.radius * 2
 
     def rand_dim(self):
-        self.radius = random.uniform(0.0025, 0.25)
-        self.height = random.uniform(0.0025, 0.25)
+        self.radius = random.uniform(min_dim / 2, max_dim / 2)
+        self.height = random.uniform(min_dim / 2, max_dim / 2)
 
     def rand_pos(self):
         position = Point()
