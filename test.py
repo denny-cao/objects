@@ -1,5 +1,3 @@
-import xml.etree.ElementTree as ET
+from numpy import random, round
 
-tree = ET.parse("shape.urdf.xacro")
-tree.find('{http://www.ros.org/wiki/xacro}property[@name="use_cylinder"]').set('value', 'true')
-
+print(random.uniform(.005, 0.5).__round__(4))

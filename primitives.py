@@ -9,11 +9,11 @@ import xml.etree.ElementTree as ET
 namespaces = {"xacro": "http://www.ros.org/wiki/xacro"}
 ET.register_namespace("xacro", "http://www.ros.org/wiki/xacro")
 
-max_coord = 0.5
-min_coord = 0.1
+MAX_COORD= 0.5
+MIN_COORD = 0.1
 
-max_dim = 0.4
-min_dim = 0.005
+MAX_DIM = 0.4
+MIN_DIM = 0.005
 
 class Shape(object):
     __metaclass__ = ABCMeta
@@ -43,9 +43,9 @@ class Shape(object):
     
     def same_len(self, dist):
         # Restrict 50/50 axis if length and width are the same
-        coord_1 = choice([random.uniform(min_coord + dist, max_coord + dist),
-                          random.uniform(-max_coord - dist, -min_coord - dist)])
-        coord_2 = random.uniform(-max_coord - dist, max_coord + dist)
+        coord_1 = choice([random.uniform(MIN_COORD + dist, MAX_COORD + dist).__round__(4),
+                          random.uniform(-MAX_COORD - dist, -MIN_COORD - dist).__round__(4)])
+        coord_2 = random.uniform(-MAX_COORD - dist, MAX_COORD + dist).__round__(4)
 
         (self.x, self.y) = (coord_1, coord_2) if choice([0, 1]) else (coord_2, coord_1)
 
@@ -57,9 +57,9 @@ class Box(Shape):
         self.height = height
 
     def rand_dim(self):
-        self.length = random.uniform(min_dim, max_dim)
-        self.width = random.uniform(min_dim, max_dim)
-        self.height = random.uniform(min_dim, max_dim)
+        self.length = random.uniform(MIN_DIM, MAX_DIM).__round__(4)
+        self.width = random.uniform(MIN_DIM, MAX_DIM).__round__(4)
+        self.height = random.uniform(MIN_DIM, MAX_DIM).__round__(4)
         self.z = self.height / 2
 
     def rand_pos(self):
@@ -72,10 +72,10 @@ class Box(Shape):
             self.diff_len()
     
     def diff_len(self):
-        self.x = random.uniform(-max_coord - self.width / 2, max_coord + self.width / 2)
+        self.x = random.uniform(-MAX_COORD - self.width / 2, MAX_COORD + self.width / 2)
         
-        if abs(self.x) - self.width / 2 < min_coord:
-            self.y =  random.uniform(min_coord + self.length, max_coord + self.length) if choice([0, 1]) else random.uniform(-max_coord - self.length, -min_coord - self.length)
+        if abs(self.x) - self.width / 2 < MIN_COORD:
+            self.y =  random.uniform(MIN_COORD + self.length, MAX_COORD + self.length).__round__(4) if choice([0, 1]) else random.uniform(-MAX_COORD - self.length, -MIN_COORD - self.length).__round__(4)
 
     def show(self):
         tree = super(Box, self).show()
@@ -95,7 +95,7 @@ class Sphere(Shape):
         self.radius = radius
 
     def rand_dim(self):
-        self.radius = random.uniform(min_dim / 2, max_dim / 2)
+        self.radius = random.uniform(MIN_DIM / 2, MAX_DIM / 2).__round__(4)
         self.z = self.radius
 
     def rand_pos(self):
@@ -120,8 +120,8 @@ class Cylinder(Shape):
         return self.radius * 2
 
     def rand_dim(self):
-        self.radius = random.uniform(min_dim / 2, max_dim / 2)
-        self.length = random.uniform(min_dim / 2, max_dim / 2)
+        self.radius = random.uniform(MIN_DIM / 2, MAX_DIM / 2).__round__(4)
+        self.length = random.uniform(MIN_DIM / 2, MAX_DIM / 2).__round__(4)
         self.z = self.length / 2
 
     def rand_pos(self):
