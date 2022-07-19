@@ -76,7 +76,8 @@ class Box(Shape):
         
         if abs(self.x) - self.width / 2 < MIN_COORD:
             self.y =  round(random.uniform(MIN_COORD + self.length, MAX_COORD + self.length), ndgits=4) if choice([0, 1]) else round(random.uniform(-MAX_COORD - self.length, -MIN_COORD - self.length), ndgits=4)
-
+        else:
+            self.y = round(random.uniform(-MIN_COORD - self.length, MAX_COORD + self.length))
     def show(self):
         tree = super(Box, self).show()
         tree.find(
