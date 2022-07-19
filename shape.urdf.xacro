@@ -13,7 +13,7 @@
   
   <xacro:include filename="$(find objects)/utils.xacro" />
 
-  <xacro:if value="$(arg use_box)">
+  <xacro:if value="${use_box}">
     <link name="box"> 
       <inertial>
         <origin xyz="${xyz}" rpy="${rpy}" />
@@ -39,7 +39,7 @@
     </gazebo>
   </xacro:if> 
 
-  <xacro:if value="$(arg use_sphere)">
+  <xacro:if value="${use_sphere}">
     <link name="sphere"> 
       <inertial>
         <origin xyz="${xyz}" rpy="${rpy}" />
@@ -66,7 +66,7 @@
   </xacro:if> 
 
   
-  <xacro:if value="$(arg use_cylinder)">
+  <xacro:if value="${use_cylinder}">
     <link name="cylinder"> 
       <inertial>
         <origin xyz="${xyz}" rpy="${rpy}" />

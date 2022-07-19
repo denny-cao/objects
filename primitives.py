@@ -1,8 +1,8 @@
+from turtle import width
 from numpy import random
 from random import choice
 import rospy
 from gazebo_msgs.srv import SpawnModel, SpawnModelRequest, DeleteModel, DeleteModelRequest
-from geometry_msgs.msg import Point
 from abc import ABCMeta, abstractmethod
 import xml.etree.ElementTree as ET
 
@@ -19,8 +19,9 @@ class Shape(object):
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    def __init__(self, mass=10):
+    def __init__(self, mass=10, x=None, y=None, z=None):
         self.mass = mass
+        self.x = self.y = self.z = None
     
     @abstractmethod
     def rand_dim(self):
@@ -30,41 +31,28 @@ class Shape(object):
     def rand_pos(self):
         pass
 
-    def same_len(self):
-        # Restrict 50/50 axis if length and width are the same
-        coord_1 = choice([random.uniform(min_coord, max_coord),
-                          random.uniform(-max_coord, -min_coord)])
-        coord_2 = random.uniform(-max_coord, max_coord)
-
-        if choice([0, 1]):
-            return coord_1, coord_2
-        else:
-            return coord_2, coord_1
-    
-    def diff_len(self): 
-        # Resrict shortest side
-        coord_1 = choice([random.uniform(min_coord, max_coord),
-                          random.uniform(-max_coord, -min_coord)])
-        coord_2 = random.uniform(-max_coord, max_coord)
-
-        return coord_1, coord_2
-
     @abstractmethod
     def show(self, truth_table):
         tree = ET.parse("shape.urdf.xacro")
         tree.find('xacro:property[@name="mass"]', namespaces).set("value", str(self.mass))
 
-        position = self.rand_pos()
 
         tree.find('xacro:property[@name="xyz"]', namespaces).set("value",
-                                                     str(position.x) + " " + str(position.y) + " " + str(position.z))
+                                                     str(self.x) + " " + str(self.y) + " " + str(self.z))
 
         tree.find('xacro:property[@name="use_box"]', namespaces).set("value", truth_table["box"])
         tree.find('xacro:property[@name="use_cylinder"]', namespaces).set("value", truth_table["cylinder"])
         tree.find('xacro:property[@name="use_sphere"]', namespaces).set("value", truth_table["sphere"])
 
         return tree
+    
+    def same_len(self, dist):
+        # Restrict 50/50 axis if length and width are the same
+        coord_1 = choice([random.uniform(min_coord + dist, max_coord + dist),
+                          random.uniform(-max_coord - dist, -min_coord - dist)])
+        coord_2 = random.uniform(-max_coord - dist, max_coord + dist)
 
+        self.x, self.y = coord_1, coord_2 if choice([0, 1]) else coord_2, coord_1
 
 class Box(Shape):
     def __init__(self, length=0, width=0, height=0, mass=10):
@@ -72,6 +60,7 @@ class Box(Shape):
         self.length = length
         self.width = width
         self.height = height
+        self.z = height / 2
 
     def rand_dim(self):
         self.length = random.uniform(min_dim, max_dim)
@@ -79,21 +68,20 @@ class Box(Shape):
         self.height = random.uniform(min_dim, max_dim)
 
     def rand_pos(self):
-        position = Point()
-
-        if self.length == self.width:
-            position.x, position.y = super(Box, self).same_len()
+        # Restrict axis 50/50
+        if self.width == self.length:
+            super(Box, self).same_len(dist=self.width / 2)
         
+        # Restrict one axis
         else:
-            if self.length > self.width:
-                position.x, position.y = super(Box, self).diff_len()
-            else:
-                position.y, position.x = super(Box, self).diff_len()
-        
-        position.z = self.height / 2
-        
-        return position
+            self.diff_len()
     
+    def diff_len(self):
+        self.x = random.uniform(-max_coord - self.width / 2, max_coord + self.width / 2)
+        
+        if abs(self.x) - self.width / 2 < min_coord:
+            self.y =  random.uniform(min_coord + self.length, max_coord + self.length) if choice([0, 1]) else random.uniform(-max_coord - self.length, -min_coord - self.length)
+
     def show(self):
         tree = super(Box, self).show(truth_table={
             "box": "true",
@@ -115,17 +103,13 @@ class Sphere(Shape):
     def __init__(self, radius=0, mass=10):
         super(Sphere, self).__init__()
         self.radius = radius
+        self.z = radius
 
     def rand_dim(self):
         self.radius = random.uniform(min_dim / 2, max_dim / 2)
 
     def rand_pos(self):
-        position = Point()
-
-        position.x, position.y = super(Sphere, self).same_len()
-        position.z = self.radius        
-      
-        return position
+        super(Sphere, self).same_len(self.radius)
 
     def show(self):
         tree = super(Sphere, self).show(truth_table={
@@ -145,6 +129,7 @@ class Cylinder(Shape):
         super(Cylinder, self).__init__()
         self.radius = radius
         self.length = length
+        self.z = length / 2
 
     def diameter(self):
         return self.radius * 2
