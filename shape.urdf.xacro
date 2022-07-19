@@ -71,18 +71,18 @@
       <inertial>
         <origin xyz="${xyz}" rpy="${rpy}" />
         <mass value="${mass}" />
-        <cylinder_inertia_def radius="${radius}" height="${height}" mass="${mass}" />
+        <cylinder_inertia_def radius="${radius}" length="${length}" mass="${mass}" />
       </inertial>
       <visual>
         <origin xyz="${xyz}" rpy="${rpy}" />
         <geometry>
-          <cylinder radius="${radius}" height="${height}"/>
+          <cylinder radius="${radius}" length="${length}"/>
         </geometry>
       </visual>
       <collision>
         <origin xyz="${xyz}" rpy="${rpy}" />
         <geometry>
-          <cylinder radius="${radius}" height="${height}"/>
+          <cylinder radius="${radius}" length="${length}"/>
         </geometry>
       </collision>
     </link>
