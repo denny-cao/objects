@@ -102,11 +102,7 @@ class Sphere(Shape):
         super(Sphere, self).same_len(self.radius)
 
     def show(self):
-        tree = super(Sphere, self).show(truth_table={
-            "box": "false",
-            "sphere": "true",
-            "cylinder": "false"
-        })
+        tree = super(Sphere, self).show()
 
         tree.find(
             'xacro:property[@name="radius"]', namespaces).set("value", str(self.radius))
@@ -133,11 +129,7 @@ class Cylinder(Shape):
 
 
     def show(self):
-        tree = super(Cylinder, self).show(truth_table={
-            "box": "false",
-            "sphere": "false",
-            "cylinder": "true"
-        })
+        tree = super(Cylinder, self).show()
 
         tree.find(
             'xacro:property[@name="radius"]', namespaces).set("value", str(self.radius))
