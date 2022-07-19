@@ -1,31 +1,30 @@
-<?xml version="1.0" ?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="box">
-  <xacro:property name="shape_name"   value="box"     /> <!-- What shape should be spawned? -->
-  <xacro:property name="length"       value="0"       /> <!-- What should the length of the box be? -->
-  <xacro:property name="width"        value="0"       /> <!-- What should the width of the box be? -->
-  <xacro:property name="height"       value="0"       /> <!-- What should the height of the box or the cylinder be? -->
-  <xacro:property name="radius"       value="0"       /> <!-- What should the radius of the sphere or cylinder be? -->
-  <xacro:property name="xyz"          value="0 0 0"   /> <!-- Where should the object be placed? -->
-  <xacro:property name="rpy"          value="0 0 0"   /> <!-- What is the orientation of the object? -->
-  <xacro:property name="mass"         value="10"      /> <!-- What is the mass of the object? -->
+  <xacro:property name="shape_name" value="Cylinder" /> 
+  <xacro:property name="length" value="0.075072390617" /> 
+  <xacro:property name="width" value="0.118964696404" /> 
+  <xacro:property name="height" value="0.251746045259" /> 
+  <xacro:property name="radius" value="0.149666197383" /> 
+  <xacro:property name="xyz" value="0.0382408605656 0.636272461865 0.0375361953085" /> 
+  <xacro:property name="rpy" value="0 0 0" /> 
+  <xacro:property name="mass" value="10" /> 
   
-  <xacro:include filename="$(find objects)/utils.xacro" />
+  <xacro:include filename="$(find franka_description)/robots/utils.xacro" />
 
   <xacro:if value="${shape_name == 'Box'}">
-    <link name="box"> 
+    <link name="Box"> 
       <inertial>
-        <origin xyz="${xyz}" rpy="${rpy}" />
+        <origin rpy="${rpy}" xyz="${xyz}" />
         <mass value="${mass}" />
-        <cuboid_inertia_def width="${width}" height="${height}" length="${length}" mass="${mass}" />
+        <cuboid_inertia_def height="${height}" length="${length}" mass="${mass}" width="${width}" />
       </inertial>
       <visual>
-        <origin xyz="${xyz}" rpy="${rpy}" />
+        <origin rpy="${rpy}" xyz="${xyz}" />
         <geometry>
           <box size="${length} ${width} ${height}" />
         </geometry>
       </visual>
       <collision>
-        <origin xyz="${xyz}" rpy="${rpy}" />
+        <origin rpy="${rpy}" xyz="${xyz}" />
         <geometry>
           <box size="${length} ${width} ${height}" />
         </geometry>
@@ -38,20 +37,20 @@
   </xacro:if> 
 
   <xacro:if value="${shape_name == 'Sphere'}">
-    <link name="sphere"> 
+    <link name="Sphere"> 
       <inertial>
-        <origin xyz="${xyz}" rpy="${rpy}" />
+        <origin rpy="${rpy}" xyz="${xyz}" />
         <mass value="${mass}" />
-        <sphere_inertia_def radius="${radius}" mass="${mass}" />
+        <sphere_inertia_def mass="${mass}" radius="${radius}" />
       </inertial>
       <visual>
-        <origin xyz="${xyz}" rpy="${rpy}" />
+        <origin rpy="${rpy}" xyz="${xyz}" />
         <geometry>
           <sphere radius="${radius}" />
         </geometry>
       </visual>
       <collision>
-        <origin xyz="${xyz}" rpy="${rpy}" />
+        <origin rpy="${rpy}" xyz="${xyz}" />
         <geometry>
           <sphere radius="${radius}" />
         </geometry>
@@ -65,22 +64,22 @@
 
   
   <xacro:if value="${shape_name == 'Cylinder'}">
-    <link name="cylinder"> 
+    <link name="Cylinder"> 
       <inertial>
-        <origin xyz="${xyz}" rpy="${rpy}" />
+        <origin rpy="${rpy}" xyz="${xyz}" />
         <mass value="${mass}" />
-        <cylinder_inertia_def radius="${radius}" length="${length}" mass="${mass}" />
+        <cylinder_inertia_def length="${length}" mass="${mass}" radius="${radius}" />
       </inertial>
       <visual>
-        <origin xyz="${xyz}" rpy="${rpy}" />
+        <origin rpy="${rpy}" xyz="${xyz}" />
         <geometry>
-          <cylinder radius="${radius}" length="${length}"/>
+          <cylinder length="${length}" radius="${radius}" />
         </geometry>
       </visual>
       <collision>
-        <origin xyz="${xyz}" rpy="${rpy}" />
+        <origin rpy="${rpy}" xyz="${xyz}" />
         <geometry>
-          <cylinder radius="${radius}" length="${length}"/>
+          <cylinder length="${length}" radius="${radius}" />
         </geometry>
       </collision>
     </link>
@@ -92,7 +91,7 @@
 
   <link name="world" />
     <joint name="world_joint" type="fixed">
-      <origin xyz="${xyz}" rpy="${rpy}" />
+      <origin rpy="${rpy}" xyz="${xyz}" />
       <parent link="world" />
       <child link="${shape_name}" />
     </joint>

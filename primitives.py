@@ -47,7 +47,7 @@ class Shape(object):
                           random.uniform(-max_coord - dist, -min_coord - dist)])
         coord_2 = random.uniform(-max_coord - dist, max_coord + dist)
 
-        self.x, self.y = coord_1, coord_2 if choice([0, 1]) else coord_2, coord_1
+        (self.x, self.y) = (coord_1, coord_2) if choice([0, 1]) else (coord_2, coord_1)
 
 class Box(Shape):
     def __init__(self, length=0, width=0, height=0, mass=10):
@@ -55,12 +55,12 @@ class Box(Shape):
         self.length = length
         self.width = width
         self.height = height
-        self.z = height / 2
 
     def rand_dim(self):
         self.length = random.uniform(min_dim, max_dim)
         self.width = random.uniform(min_dim, max_dim)
         self.height = random.uniform(min_dim, max_dim)
+        self.z = self.height / 2
 
     def rand_pos(self):
         # Restrict axis 50/50
@@ -93,10 +93,10 @@ class Sphere(Shape):
     def __init__(self, radius=0, mass=10):
         super(Sphere, self).__init__()
         self.radius = radius
-        self.z = radius
 
     def rand_dim(self):
         self.radius = random.uniform(min_dim / 2, max_dim / 2)
+        self.z = self.radius
 
     def rand_pos(self):
         super(Sphere, self).same_len(self.radius)
@@ -115,7 +115,6 @@ class Cylinder(Shape):
         super(Cylinder, self).__init__()
         self.radius = radius
         self.length = length
-        self.z = length / 2
 
     def diameter(self):
         return self.radius * 2
@@ -123,6 +122,7 @@ class Cylinder(Shape):
     def rand_dim(self):
         self.radius = random.uniform(min_dim / 2, max_dim / 2)
         self.length = random.uniform(min_dim / 2, max_dim / 2)
+        self.z = self.length / 2
 
     def rand_pos(self):
         super(Cylinder, self).same_len(self.radius)
@@ -152,6 +152,8 @@ def rand_shape():
     shape = choice([Box(), Sphere(), Cylinder()])
     
     shape.rand_dim()
+
+    shape.rand_pos()
 
     shape.show()
 
