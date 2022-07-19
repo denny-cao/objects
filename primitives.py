@@ -43,9 +43,9 @@ class Shape(object):
     
     def same_len(self, dist):
         # Restrict 50/50 axis if length and width are the same
-        coord_1 = choice([random.uniform(MIN_COORD + dist, MAX_COORD + dist).__round__(4),
-                          random.uniform(-MAX_COORD - dist, -MIN_COORD - dist).__round__(4)])
-        coord_2 = random.uniform(-MAX_COORD - dist, MAX_COORD + dist).__round__(4)
+        coord_1 = choice([round(random.uniform(MIN_COORD + dist, MAX_COORD + dist), ndgits=4),
+                          round(random.uniform(-MAX_COORD - dist, -MIN_COORD - dist), ndigits=4)])
+        coord_2 = random.uniform(-MAX_COORD - dist, MAX_COORD + dist)
 
         (self.x, self.y) = (coord_1, coord_2) if choice([0, 1]) else (coord_2, coord_1)
 
@@ -57,9 +57,9 @@ class Box(Shape):
         self.height = height
 
     def rand_dim(self):
-        self.length = random.uniform(MIN_DIM, MAX_DIM).__round__(4)
-        self.width = random.uniform(MIN_DIM, MAX_DIM).__round__(4)
-        self.height = random.uniform(MIN_DIM, MAX_DIM).__round__(4)
+        self.length = round(random.uniform(MIN_DIM, MAX_DIM), ndgits=4)
+        self.width = round(random.uniform(MIN_DIM, MAX_DIM), ndgits=4)
+        self.height = round(random.uniform(MIN_DIM, MAX_DIM), ndgits=4)
         self.z = self.height / 2
 
     def rand_pos(self):
@@ -72,10 +72,10 @@ class Box(Shape):
             self.diff_len()
     
     def diff_len(self):
-        self.x = random.uniform(-MAX_COORD - self.width / 2, MAX_COORD + self.width / 2)
+        self.x = round(random.uniform(-MAX_COORD - self.width / 2, MAX_COORD + self.width / 2), ndgits=4)
         
         if abs(self.x) - self.width / 2 < MIN_COORD:
-            self.y =  random.uniform(MIN_COORD + self.length, MAX_COORD + self.length).__round__(4) if choice([0, 1]) else random.uniform(-MAX_COORD - self.length, -MIN_COORD - self.length).__round__(4)
+            self.y =  round(random.uniform(MIN_COORD + self.length, MAX_COORD + self.length), ndgits=4) if choice([0, 1]) else round(random.uniform(-MAX_COORD - self.length, -MIN_COORD - self.length), ndgits=4)
 
     def show(self):
         tree = super(Box, self).show()
@@ -95,7 +95,7 @@ class Sphere(Shape):
         self.radius = radius
 
     def rand_dim(self):
-        self.radius = random.uniform(MIN_DIM / 2, MAX_DIM / 2).__round__(4)
+        self.radius = round(random.uniform(MIN_DIM / 2, MAX_DIM / 2), ndgits=4)
         self.z = self.radius
 
     def rand_pos(self):
@@ -120,8 +120,8 @@ class Cylinder(Shape):
         return self.radius * 2
 
     def rand_dim(self):
-        self.radius = random.uniform(MIN_DIM / 2, MAX_DIM / 2).__round__(4)
-        self.length = random.uniform(MIN_DIM / 2, MAX_DIM / 2).__round__(4)
+        self.radius = round(random.uniform(MIN_DIM / 2, MAX_DIM / 2), ndgits=4)
+        self.length = round(random.uniform(MIN_DIM / 2, MAX_DIM / 2), ndgits=4)
         self.z = self.length / 2
 
     def rand_pos(self):
