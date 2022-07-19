@@ -141,30 +141,30 @@ class Sphere(Shape):
 
 
 class Cylinder(Shape):
-    def __init__(self, radius=0, height=0, mass=10):
+    def __init__(self, radius=0, length=0, mass=10):
         super(Cylinder, self).__init__()
         self.radius = radius
-        self.height = height
+        self.length = length
 
     def diameter(self):
         return self.radius * 2
 
     def rand_dim(self):
         self.radius = random.uniform(min_dim / 2, max_dim / 2)
-        self.height = random.uniform(min_dim / 2, max_dim / 2)
+        self.length = random.uniform(min_dim / 2, max_dim / 2)
 
     def rand_pos(self):
         position = Point()
 
         position.x, position.y = super(Cylinder, self).same_len()
-        position.z = self.height / 2
+        position.z = self.length / 2
         
         return position
 
 
     def show(self):
         tree = super(Cylinder, self).show(truth_table={
-            "box": "true",
+            "box": "false",
             "sphere": "false",
             "cylinder": "true"
         })
@@ -172,7 +172,7 @@ class Cylinder(Shape):
         tree.find(
             'xacro:property[@name="radius"]', namespaces).set("value", str(self.radius))
         tree.find(
-            'xacro:property[@name="height"]', namespaces).set("value", str(self.height))
+            'xacro:property[@name="length"]', namespaces).set("value", str(self.length))
 
         tree.write("shape.urdf.xacro")
 
