@@ -1,7 +1,5 @@
 from numpy import random
 from random import choice
-import rospy
-from gazebo_msgs.srv import SpawnModel, SpawnModelRequest, DeleteModel, DeleteModelRequest
 from abc import ABCMeta, abstractmethod
 import xml.etree.ElementTree as ET
 
@@ -137,27 +135,3 @@ class Cylinder(Shape):
             'xacro:property[@name="length"]', namespaces).set("value", str(self.length))
 
         tree.write("shape.urdf.xacro")
-
-
-# Spawn and Delete Model
-class sim_control_handler():
-    def __init__(self):
-        self.shape_model_name = "object"
-        self.delete_model_proxy = rospy.ServiceProxy("/gazebo/delete_model", DeleteModel)
-        self.spawn_model_proxy = rospy.ServiceProxy("/gazebo/spawn_urdf_model", SpawnModel)
-
-
-# Generate random primitive
-def rand_shape():
-    shape = choice([Box(), Sphere(), Cylinder()])
-    
-    shape.rand_dim()
-
-    shape.rand_pos()
-
-    shape.show()
-
-
-if __name__ == "__main__":
-    rand_shape()
-    
