@@ -16,8 +16,8 @@
   <arg name="mu"          default="0.2"   doc="What should the coefficient of friction be? " />
   <arg name="controller"  default="hybrid_impedance_wrench_controller"     doc="Which example controller should be started? (One of {cartesian_impedance,model,force}_example_controller)" />
   <!-- <arg name="controller"  default="cartesian_impedance_example_controller"     doc="Which example controller should be started? (One of {cartesian_impedance,model,force}_example_controller)" /> -->
-  <arg name="x"           default="-.4"   doc="How far forward to place the base of the robot in [m]?" />
-  <arg name="y"           default=".4"    doc="How far leftwards to place the base of the robot in [m]?" />
+  <arg name="x"           default="0"   doc="How far forward to place the base of the robot in [m]?" />
+  <arg name="y"           default="0"    doc="How far leftwards to place the base of the robot in [m]?" />
   <arg name="z"           default="0"     doc="How far upwards to place the base of the robot in [m]?" />
   <arg name="roll"        default="0"     doc="How much to rotate the base of the robot around its X-axis in [rad]?" />
   <arg name="pitch"       default="0"     doc="How much to rotate the base of the robot around its Y-axis in [rad]?" />

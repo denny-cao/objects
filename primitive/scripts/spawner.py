@@ -34,9 +34,6 @@ def spawn_cb(req):
 
     spawner.unpause_sim()
 
-def get_pos_cb(msg):
-    print(msg.pose[6].position.x)
-
 
 if __name__ == "__main__":
     spawner = sim_control_handler()
@@ -44,13 +41,6 @@ if __name__ == "__main__":
     rospy.init_node("spawner")
 
     service = rospy.Service("spawn_amount", Spawn, spawn_cb)
-
-    rospy.init_node("position_node")
-
-    # start subscribing to contacts state
-    contact_state_sub = rospy.Subscriber("/gazebo/link_states",
-                                        LinkStates, get_pos_cb)
-    rospy.spin()
     
 
 
