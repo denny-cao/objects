@@ -17,7 +17,7 @@ def rand_shape():
     return shape
 
 
-def callback():
+def callback(msg):
     if spawner.primitive_spawned:
             spawner.delete_models()
     

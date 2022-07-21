@@ -39,7 +39,7 @@ class sim_control_handler():
         self.primitive_tf.child_frame_id = self.primitive_model_name
         
         # Set position of object
-        pos = Point(x=shape.x, y=shape.y, z=shape.z)
+        pos = Point(x=shape.x, y=shape.y, z=0)
         ori = Quaternion(x=0, y=0, z=0, w=0)
         self.primitive_pose = Pose(position=pos, orientation=ori)
         self.primitive_tf.transform.rotation = ori
