@@ -4,7 +4,7 @@ import tf2_ros
 import xacro
 from geometry_msgs.msg import Vector3, Pose, TransformStamped, Point, Quaternion
 from gazebo_msgs.srv import SetModelConfiguration, SetModelConfigurationRequest, DeleteModel, DeleteModelRequest, SpawnModel, SpawnModelRequest, SpawnModelResponse
-from primitive.srv import Spawn, SpawnResponse, SpawnRequest
+from primitive_msgs.srv import Spawn, SpawnResponse, SpawnRequest
 
 class sim_control_handler():
     def __init__(self):

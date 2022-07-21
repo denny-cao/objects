@@ -12,15 +12,5 @@ add_service_files( DIRECTORY srv
         Spawn.srv
 )
 
-
-add_message_files( DIRECTORY msg
-        FILES
-        ControllerDiag.msg
-)
-
-generate_messages( DEPENDENCIES std_msgs )
-
-generate_messages(DEPENDENCIES std_msgs geometry_msgs control_msgs sensor_msgs actionlib_msgs franka_msgs)
-
 catkin_package(CATKIN_DEPENDS message_runtime std_msgs)
 
