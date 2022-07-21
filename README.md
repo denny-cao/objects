@@ -1,6 +1,6 @@
 # Spawn Primitive Objects
 
-## BUILD:
+## BUILD
 ```shell
 catkin build primitive
 catkin build primitive_msgs 
