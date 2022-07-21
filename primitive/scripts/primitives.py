@@ -2,6 +2,8 @@ from numpy import random
 from random import choice
 from abc import ABCMeta, abstractmethod
 import xml.etree.ElementTree as ET
+import rospy
+from gazebo_msgs.msg import LinkStates
 
 namespaces = {"xacro": "http://www.ros.org/wiki/xacro"}
 ET.register_namespace("xacro", "http://www.ros.org/wiki/xacro")
@@ -124,7 +126,6 @@ class Cylinder(Shape):
 
     def rand_pos(self):
         super(Cylinder, self).same_len(self.radius)
-
 
     def show(self):
         tree = super(Cylinder, self).show()

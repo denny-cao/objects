@@ -78,3 +78,45 @@ class sim_control_handler():
 
         self.primitive_spawned = True
         self.pub_primitive_tf()
+
+    def pause_sim(self):
+        rospy.loginfo("PAUSING service found...")
+        paused_done = False
+        counter = 0
+        while not paused_done and not rospy.is_shutdown():
+            if counter < self.max_retry:
+                try:
+                    rospy.loginfo("PAUSING service calling...")
+                    self.pause_proxy()
+                    paused_done = True
+                    rospy.loginfo("PAUSING service calling...DONE")
+                except rospy.ServiceException as e:
+                    counter += 1
+                    rospy.logerr("/gazebo/pause_physics service call failed")
+            else:
+                error_message = "Maximum retries done"+str(self._max_retry)+", please check Gazebo pause service"
+                rospy.logerr(error_message)
+                assert False, error_message
+
+        rospy.loginfo("PAUSING FINISH")
+
+    def unpause_sim(self):
+        rospy.loginfo("UNPAUSING service found...")
+        unpaused_done = False
+        counter = 0
+        while not unpaused_done and not rospy.is_shutdown():
+            if counter < self.max_retry:
+                try:
+                    rospy.loginfo("UNPAUSING service calling...")
+                    self.unpause_proxy()
+                    unpaused_done = True
+                    rospy.loginfo("UNPAUSING service calling...DONE")
+                except rospy.ServiceException as e:
+                    counter += 1
+                    rospy.logerr("/gazebo/unpause_physics service call failed...Retrying "+str(counter))
+            else:
+                error_message = "Maximum retries done"+str(self._max_retry)+", please check Gazebo unpause service"
+                rospy.logerr(error_message)
+                assert False, error_message
+
+        rospy.loginfo("UNPAUSING FiNISH")

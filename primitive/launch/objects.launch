@@ -5,21 +5,19 @@
   <arg name="gazebo"      default="true"  doc="Should the gazebo simulation be launched? Use false in case if you want to include this file and launch gazebo yourself" />
   <arg name="headless"    default="false" doc="Should the gazebo GUI be launched?" />
   <arg name="paused"      default="false" doc="Should the simulation directly be stopped at 0s?" />
-  <arg name="world"       default="worlds/empty.world" doc="Filename to a SDF World for gazebo to use" />
+  <arg name="world"       default="worlds/heightmap0.world" doc="Filename to a SDF World for gazebo to use" />
   <arg name="rviz"        default="true"  doc="Should RVIz be launched?" />
   <arg name="dyn_reconf"  default="true"  doc="Should dynamic reconfigure be launched?" />
 
   <!-- Robot Customization -->
   <arg name="arm_id"      default="panda" doc="Name of the panda robot to spawn" />
-  <arg name="use_gripper" default="false" doc="Should a franka hand be mounted on the flange?" />
-  <arg name="use_peg"     default="false" doc="Should a peg be mounted on the flange?" />
-  <arg name="use_sphere"  default="false" doc="Should a sphere be mounted on the flange? " />
-  <arg name="sphere_radius" default="1.0" doc="How large should the sphere be in [m]? " />
+  <arg name="end_effector"  default=""    doc="What should be mounted of the flange [hand, sphere, peg]?" />
+  <arg name="sphere_radius" default="0.05" doc="How large should the sphere be in [m]? " />
   <arg name="mu"          default="0.2"   doc="What should the coefficient of friction be? " />
   <arg name="controller"  default="hybrid_impedance_wrench_controller"     doc="Which example controller should be started? (One of {cartesian_impedance,model,force}_example_controller)" />
   <!-- <arg name="controller"  default="cartesian_impedance_example_controller"     doc="Which example controller should be started? (One of {cartesian_impedance,model,force}_example_controller)" /> -->
-  <arg name="x"           default="0"     doc="How far forward to place the base of the robot in [m]?" />
-  <arg name="y"           default="0"     doc="How far leftwards to place the base of the robot in [m]?" />
+  <arg name="x"           default="-.4"   doc="How far forward to place the base of the robot in [m]?" />
+  <arg name="y"           default=".4"    doc="How far leftwards to place the base of the robot in [m]?" />
   <arg name="z"           default="0"     doc="How far upwards to place the base of the robot in [m]?" />
   <arg name="roll"        default="0"     doc="How much to rotate the base of the robot around its X-axis in [rad]?" />
   <arg name="pitch"       default="0"     doc="How much to rotate the base of the robot around its Y-axis in [rad]?" />
@@ -43,7 +41,7 @@
 
   <group ns="$(arg arm_id)">
     <!-- OG robot description loading -->
-    <group if="$(arg use_peg)">
+    <group if="$(eval end_effector == 'peg')">
       <rosparam command="load" file="$(find screwing_simulation)/config/peg_param.yaml" />
 
       <!-- publish tfs of hole which can be respawned... -->
@@ -53,28 +51,26 @@
       </node> -->
     </group>
 
-    <group if="$(arg use_sphere)">
-        <rosparam command="load" file="$(find screwing_simulation)/config/sphere_param.yaml" />
+    <group if="$(eval end_effector == 'sphere')">
+      <rosparam command="load" file="$(find screwing_simulation)/config/sphere_param.yaml" />
     </group>
 
     <param name="robot_description"
                 command="xacro $(find franka_description)/robots/panda_arm_attachments.urdf.xacro
-                         gazebo:=true
-                         hand:=$(arg use_gripper)
-                         peg:=$(arg use_peg)
-                         sphere:=$(arg use_sphere)
-                         radius:=$(arg sphere_radius)
-                         mu:=$(arg mu)
-                         arm_id:=$(arg arm_id)
-                         xyz:='$(arg x) $(arg y) $(arg z)'
-                         rpy:='$(arg roll) $(arg pitch) $(arg yaw)'"/>
+                      gazebo:=true
+                      end_effector:=$(arg end_effector)
+                      radius:=$(arg sphere_radius)
+                      mu:=$(arg mu)
+                      arm_id:=$(arg arm_id)
+                      xyz:='$(arg x) $(arg y) $(arg z)'
+                      rpy:='$(arg roll) $(arg pitch) $(arg yaw)'"/>
 
     <!-- <param name="publish_diagnostic" type="bool" value="true"/> -->
 
     <rosparam file="$(find screwing_simulation)/config/franka_hw_gazebo.yaml" subst_value="true" />
     <rosparam file="$(find screwing_simulation)/config/franka_gazebo_controllers.yaml" subst_value="true" />
 
-    <param name="m_ee" value="0.76" if="$(arg use_gripper)" />
+    <param name="m_ee" value="0.76" if="$(eval end_effector == 'hand')" />
 
 
     <node name="$(arg arm_id)_model_spawner"
@@ -104,7 +100,7 @@
     <node pkg="controller_manager"
           type="spawner"
           name="$(arg arm_id)_gripper_spawner"
-          if="$(arg use_gripper)"
+          if="$(eval end_effector == 'hand')"
           args="franka_gripper"
           respawn="false"
     />
@@ -146,6 +142,21 @@
       <param name="link_name" value="$(arg arm_id)_link0" />
     </node>
 
+  </group>
+
+  <group ns="primitives">
+    <param name="primitive_description" command="xacro $(find franka_description)/robots/shape.urdf.xacro" />
+    <node name="primitive_state_publisher"
+          pkg="robot_state_publisher"
+          type="robot_state_publisher">
+          <remap from="robot_description" to="primitive_description" />
+     </node>
+
+     <node name="primitive_model_spawner"
+           pkg="gazebo_ros"
+           type="spawn_model"
+           args="-param primitive_description -urdf -model primitive">
+     </node>
   </group>
 
   <node  pkg="rviz" type="rviz" output="screen" name="rviz" args="-d $(find screwing_simulation)/config/franka_gazebo_description_with_marker.rviz" if="$(arg rviz)"/>

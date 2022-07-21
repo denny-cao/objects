@@ -18,3 +18,7 @@ python spawner.py
 ```shell
 rosservice call \spawn_amount 3
 ```
+
+## TODO
+- Add pause and border around franka to stop objects from spawning in it when moving
+- Add response to service
