@@ -16,7 +16,7 @@ class sim_control_handler():
         self.primitive_spawned = False
 
         self.primitive_tf = TransformStamped()
-        self.primitive_tf.header.frame_id = "/world"
+        self.primitive_tf.header.frame_id = "/world" 
     
         self.primitive_tf_bcaster = tf2_ros.StaticTransformBroadcaster()
 
@@ -25,15 +25,7 @@ class sim_control_handler():
         rospack = rospkg.RosPack()
         self.primitive_urdf_path = rospack.get_path("franka_description") + "/robots/shape.urdf.xacro"
 
-        
-        # Parse xacro
-        xacro_file = "shape.urdf.xacro"
-        doc = xacro.parse(open(xacro_file))
-        xacro.process_doc(doc)
-        description_xml = doc.toxml()
-        
         self.spawn_model_req = SpawnModelRequest() 
-        self.spawn_model_req.model_xml = description_xml
         self.spawn_model_req.reference_frame = ""
 
         self.delete_model_req = DeleteModelRequest() 
@@ -50,6 +42,7 @@ class sim_control_handler():
         pos = Point(x=shape.x, y=shape.y, z=shape.z)
         ori = Quaternion(x=0, y=0, z=0, w=0)
         self.primitive_pose = Pose(position=pos, orientation=ori)
+        self.primitive_tf.transform.rotation = ori
 
     def pub_primitive_tf(self):
         self.primitive_tf_bcaster.sendTransform(self.primitive_tf)
@@ -66,6 +59,13 @@ class sim_control_handler():
 
     def spawn_model(self):
         rospy.loginfo("spawning shape...")
+        
+        # Parse xacro
+        xacro_file = "shape.urdf.xacro"
+        doc = xacro.parse(open(xacro_file))
+        xacro.process_doc(doc)
+        description_xml = doc.toxml()
+        self.spawn_model_req.model_xml = description_xml
 
         self.spawn_model_req.model_name = self.primitive_model_name 
         self.spawn_model_req.initial_pose = self.primitive_pose
