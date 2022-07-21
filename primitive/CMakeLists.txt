@@ -13,6 +13,7 @@ find_package(catkin REQUIRED
     rospy
     primitive_msgs
     gazebo_msgs
+    franka_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -104,7 +105,8 @@ catkin_python_setup()
 ## LIBRARIES: libraries you create in this project that dependent projects also need
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
-catkin_package(DEPENDS message_runtime rospy gazebo_msgs std_msgs geometry_msgs primitive_msgs
+catkin_package(DEPENDS message_runtime rospy gazebo_msgs std_msgs geometry_msgs primitive_msgs franka_msgs
+
 
 #  INCLUDE_DIRS include
 #  LIBRARIES screwing_simulation

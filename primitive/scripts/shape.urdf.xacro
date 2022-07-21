@@ -1,10 +1,10 @@
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="box">
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="primitives">
   <xacro:property name="shape_name" value="Cylinder" /> 
-  <xacro:property name="length" value="1" /> 
-  <xacro:property name="width" value="0.118964696404" /> 
-  <xacro:property name="height" value="0.251746045259" /> 
-  <xacro:property name="radius" value="0.149666197383" /> 
-  <xacro:property name="xyz" value="0.0382408605656 0.636272461865 0.5" /> 
+  <xacro:property name="length" value="0.1096" /> 
+  <xacro:property name="width" value="0.0896" /> 
+  <xacro:property name="height" value="0.2322" /> 
+  <xacro:property name="radius" value="0.1183" /> 
+  <xacro:property name="xyz" value="-0.5905 -0.5617 0.0548" /> 
   <xacro:property name="rpy" value="0 0 0" /> 
   <xacro:property name="mass" value="10" /> 
   
@@ -15,7 +15,7 @@
       <inertial>
         <origin rpy="${rpy}" xyz="${xyz}" />
         <mass value="${mass}" />
-        <cuboid_inertia_def height="${height}" length="${length}" mass="${mass}" width="${width}" />
+        <xacro:cuboid_inertia_def height="${height}" length="${length}" mass="${mass}" width="${width}" />
       </inertial>
       <visual>
         <origin rpy="${rpy}" xyz="${xyz}" />
@@ -41,7 +41,7 @@
       <inertial>
         <origin rpy="${rpy}" xyz="${xyz}" />
         <mass value="${mass}" />
-        <sphere_inertia_def mass="${mass}" radius="${radius}" />
+        <xacro:sphere_inertia_def mass="${mass}" radius="${radius}" />
       </inertial>
       <visual>
         <origin rpy="${rpy}" xyz="${xyz}" />
@@ -61,14 +61,13 @@
       <static>true</static>
     </gazebo>
   </xacro:if> 
-
   
   <xacro:if value="${shape_name == 'Cylinder'}">
     <link name="Cylinder"> 
       <inertial>
         <origin rpy="${rpy}" xyz="${xyz}" />
         <mass value="${mass}" />
-        <cylinder_inertia_def length="${length}" mass="${mass}" radius="${radius}" />
+        <xacro:cylinder_inertia_def length="${length}" mass="${mass}" radius="${radius}" />
       </inertial>
       <visual>
         <origin rpy="${rpy}" xyz="${xyz}" />
@@ -88,11 +87,4 @@
       <static>true</static>
     </gazebo>
   </xacro:if> 
-
-  <link name="world" />
-    <joint name="world_joint" type="fixed">
-      <origin rpy="${rpy}" xyz="${xyz}" />
-      <parent link="world" />
-      <child link="${shape_name}" />
-    </joint>
 </robot>

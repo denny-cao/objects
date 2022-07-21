@@ -12,5 +12,7 @@ add_service_files( DIRECTORY srv
         Spawn.srv
 )
 
+generate_messages( DEPENDENCIES std_msgs)
+
 catkin_package(CATKIN_DEPENDS message_runtime std_msgs)
 
