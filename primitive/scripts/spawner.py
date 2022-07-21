@@ -2,9 +2,9 @@
 
 from spawn_helper import sim_control_handler
 from primitives import Box, Sphere, Cylinder
-from random import choice, randint
+from random import choice
 import rospy
-from std_msgs.msg import Bool
+from primitive_msgs.srv import Spawn
 
 def rand_shape():
     # Generate random primitive
@@ -17,26 +17,23 @@ def rand_shape():
     return shape
 
 
-def callback(msg):
+def callback(req):
     if spawner.primitive_spawned:
             spawner.delete_models()
     
-    shape_amount = randint(2, 5)
-    
-    for number in range(1, shape_amount):
+    for number in range(1, req.amount + 1):    
         shape = rand_shape()
-
         spawner.update_shape(shape, number)
+        
         spawner.spawn_model()
 
 
 if __name__ == "__main__":
     spawner = sim_control_handler()
 
-    # subscribe to node that publishes when the objects are to be changed
-    change_prim_sub = rospy.Subscriber("/change_prim", Bool, callback)
-    
     rospy.init_node("spawner")
+
+    service = rospy.Service("spawn_amount", Spawn, callback)
 
     rospy.spin()
     

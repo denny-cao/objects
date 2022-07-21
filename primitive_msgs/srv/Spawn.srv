@@ -1,0 +1,4 @@
+int8 amount
+---
+bool success
+string error
