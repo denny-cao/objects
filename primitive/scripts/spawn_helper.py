@@ -10,6 +10,8 @@ class sim_control_handler():
         self.primitives = []
         self.primitive_model_name = None
 
+        self.max_retry = 5
+
         # Proxies
         self.delete_model_proxy = rospy.ServiceProxy("/gazebo/delete_model", DeleteModel)
         self.spawn_model_proxy = rospy.ServiceProxy("/gazebo/spawn_urdf_model", SpawnModel)
