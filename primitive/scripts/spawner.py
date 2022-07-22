@@ -36,18 +36,15 @@ class Spawn:
             
             self.spawner.spawn_model()
 
-        self.spawner.unpause_sim()
-    
-    def service(self):
-        rospy.init_node("spawner")
-
-        service = rospy.Service("spawn_amount", Spawn, self.spawn_cb)
-
-        rospy.spin()
+        self.spawner.unpause_sim()        
 
 if __name__ == "__main__":
     spawn = Spawn()
-    spawn.service()
+    rospy.init_node("spawner")
+
+    service = rospy.Service("spawn_amount", Spawn, spawn.spawn_cb)
+
+    rospy.spin()
     
 
 
