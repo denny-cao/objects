@@ -27,11 +27,11 @@ class Shape(object):
     @abstractmethod
     def rand_pos(self, msg):
         # Get list of link positions
-        link_position = msg.pos[-1].position
+        link_position = msg.pose[-1].position
 
         largest_x = max([0, link_position.x])
         largest_y = max([0, link_position.y])
-        self.largest_z = max(link.position.z for link in msg.pos)
+        self.largest_z = max(link.position.z for link in msg.pose)
 
         # Generate random x-value
         self.x = round(random.uniform(-MAX_COORD, MAX_COORD), ndigits=4)
