@@ -37,7 +37,8 @@ class SpawnShape:
             
         for number in range(1, req.amount + 1):    
             number += 1
-            link_states_sub = rospy.Subscriber("/gazebo/link_states", LinkStates, self.rand_shape) 
+            link_states = rospy.wait_for_message("/gazebo/link_states", LinkStates)
+            self.rand_shape(link_states) 
 
         self.spawner.unpause_sim()        
 
