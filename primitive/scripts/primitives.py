@@ -32,7 +32,7 @@ class Shape(object):
         largest_x = max([0, link_position.x])
         largest_y = max([0, link_position.y])
         # Get smallest z-value, exlcuding base link z=0
-        self.largest_z = min(msg.pose[i].position.z for i in msg.pose[1:])
+        self.largest_z = min(msg.pose[i].position.z for i in range(1, len(msg.pose)))
 
         # Generate random x-value
         self.x = round(random.uniform(-MAX_COORD, MAX_COORD), ndigits=4)
