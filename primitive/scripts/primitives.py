@@ -9,7 +9,7 @@ namespaces = {"xacro": "http://www.ros.org/wiki/xacro"}
 ET.register_namespace("xacro", "http://www.ros.org/wiki/xacro")
 
 MAX_COORD= 0.5
-SAFETY_DIST = 0.05
+SAFETY_DIST = 0.1
 MAX_DIM = 0.4
 MIN_DIM = 0.05
 
@@ -26,12 +26,13 @@ class Shape(object):
 
     @abstractmethod
     def rand_pos(self, msg):
-        # Get list of link positions
+        # Get end link position
         link_position = msg.pose[-1].position
 
         largest_x = max([0, link_position.x])
         largest_y = max([0, link_position.y])
-        self.largest_z = max(link.position.z for link in msg.pose)
+        # Get smallest z-value, exlcuding base link z=0
+        self.largest_z = min(msg.pose[i].position.z for i in msg.pose[1:])
 
         # Generate random x-value
         self.x = round(random.uniform(-MAX_COORD, MAX_COORD), ndigits=4)
@@ -40,7 +41,7 @@ class Shape(object):
         self.lower_bound_x = link_position.x - SAFETY_DIST if not largest_x else -SAFETY_DIST
         self.upper_bound_x = link_position.x + SAFETY_DIST if largest_x else SAFETY_DIST
 
-        self.lower_bound_y = link_position.y - SAFETY_DIST - SAFETY_DIST if not largest_y else -SAFETY_DIST
+        self.lower_bound_y = link_position.y - SAFETY_DIST if not largest_y else -SAFETY_DIST
         self.upper_bound_y = link_position.y + SAFETY_DIST if largest_y else SAFETY_DIST
 
         # Check if y-value needs to be bounded
@@ -57,8 +58,8 @@ class Shape(object):
     @abstractmethod
     def rand_dim(self):
         # Max_dim is a function of distance from boundary from center of shape
-        max_dim_x = round((self.x - self.upper_bound_x) * 2 if abs(self.x - self.upper_bound_x) >= abs(self.x - self.lower_bound_x) else (self.lower_bound_x - self.x) * 2, ndigits=4)
-        max_dim_y = round((self.y - self.upper_bound_y) * 2 if abs(self.y - self.upper_bound_y) >= abs(self.y - self.lower_bound_y) else (self.lower_bound_y - self.y) * 2, ndigits=4)
+        max_dim_x = round((self.x - self.upper_bound_x) * 2 if abs(self.x - self.upper_bound_x) <= abs(self.x - self.lower_bound_x) else (self.lower_bound_x - self.x) * 2, ndigits=4)
+        max_dim_y = round((self.y - self.upper_bound_y) * 2 if abs(self.y - self.upper_bound_y) <= abs(self.y - self.lower_bound_y) else (self.lower_bound_y - self.y) * 2, ndigits=4)
         
         return max_dim_x, max_dim_y
 
@@ -114,8 +115,8 @@ class Sphere(Shape):
     def rand_dim(self):
         max_dim_x, max_dim_y = super(Sphere, self).rand_dim()
 
-        max_rad = max_dim_x / 2 if max_dim_x < max_dim_y else max_dim_y / 2
-        max_rad = self.largest_z if self.largest_z < max_rad else max_rad
+        max_rad = abs(max_dim_x / 2) if abs(max_dim_x) < abs(max_dim_y) else abs(max_dim_y / 2)
+        max_rad = abs(self.largest_z) if abs(self.largest_z) < max_rad else max_rad
 
         self.radius = round(random.uniform(MIN_DIM, max_rad), ndigits=4)
 
