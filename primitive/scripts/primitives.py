@@ -89,6 +89,8 @@ class Box(Shape):
         self.length = round(random.uniform(MIN_DIM, max_dim_y), ndigits=4)
         self.height = round(random.uniform(MIN_DIM, self.largest_z), ndigits=4)
 
+        self.z = self.height / 2
+
     def show(self):
         tree = super(Box, self).show()
         tree.find(
@@ -117,6 +119,8 @@ class Sphere(Shape):
 
         self.radius = round(random.uniform(MIN_DIM, max_rad), ndigits=4)
 
+        self.z = self.radius
+
     def show(self):
         tree = super(Sphere, self).show()
 
@@ -142,6 +146,8 @@ class Cylinder(Shape):
 
         self.radius = round(random.uniform(MIN_DIM, max_rad), ndigits=4)
         self.length = round(random.uniform(MIN_DIM, self.largest_z), ndigits=4)
+
+        self.z = self.length / 2
 
     def show(self):
         tree = super(Cylinder, self).show()

@@ -102,7 +102,7 @@ class sim_control_handler():
                     counter += 1
                     rospy.logerr("/gazebo/pause_physics service call failed")
             else:
-                error_message = "Maximum retries done"+str(self._max_retry)+", please check Gazebo pause service"
+                error_message = "Maximum retries done"+str(self.max_retry)+", please check Gazebo pause service"
                 rospy.logerr(error_message)
                 assert False, error_message
 
@@ -123,7 +123,7 @@ class sim_control_handler():
                     counter += 1
                     rospy.logerr("/gazebo/unpause_physics service call failed...Retrying "+str(counter))
             else:
-                error_message = "Maximum retries done"+str(self._max_retry)+", please check Gazebo unpause service"
+                error_message = "Maximum retries done"+str(self.max_retry)+", please check Gazebo unpause service"
                 rospy.logerr(error_message)
                 assert False, error_message
 
