@@ -38,7 +38,7 @@ class SpawnShape:
         self.spawner.pause_sim()
 
         for number in range(1, req.amount + 1):    
-            number += 1
+            self.number += 1
 
             self.rand_shape(link_states) 
 
