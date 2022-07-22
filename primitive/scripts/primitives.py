@@ -79,8 +79,8 @@ class Box(Shape):
         self.width = width
         self.height = height
 
-    def rand_pos(self):
-        super(Box, self).rand_pos()
+    def rand_pos(self, msg):
+        super(Box, self).rand_pos(msg)
 
     def rand_dim(self):
         max_dim_x, max_dim_y = super(Box, self).rand_dim()
@@ -106,8 +106,8 @@ class Sphere(Shape):
         super(Sphere, self).__init__()
         self.radius = radius
 
-    def rand_pos(self):
-        super(Sphere, self).rand_pos()
+    def rand_pos(self, msg):
+        super(Sphere, self).rand_pos(msg)
 
     def rand_dim(self):
         max_dim_x, max_dim_y = super(Sphere, self).rand_dim()
@@ -132,8 +132,8 @@ class Cylinder(Shape):
         self.radius = radius
         self.length = length
 
-    def rand_pos(self):
-        super(Cylinder, self).rand_pos()
+    def rand_pos(self, msg):
+        super(Cylinder, self).rand_pos(msg)
 
     def rand_dim(self):
         max_dim_x, max_dim_y = super(Cylinder, self).rand_dim()
