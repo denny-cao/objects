@@ -11,7 +11,7 @@ class SpawnShape:
     def __init__(self):
         self.shape = None
         self.spawner = sim_control_handler()
-        self.number = 0
+        self.number = None
 
     def rand_shape(self, msg):
         # Generate random primitive
@@ -38,10 +38,11 @@ class SpawnShape:
         self.spawner.pause_sim()
 
         for number in range(1, req.amount + 1):    
-            self.number += 1
+            self.number = number
 
             self.rand_shape(link_states) 
 
+        self.spawner.update_prim_spawned(True)
         self.spawner.unpause_sim()        
 
 if __name__ == "__main__":

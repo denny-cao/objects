@@ -84,8 +84,10 @@ class sim_control_handler():
 
         rospy.loginfo("finished spawning shape")
 
-        self.primitive_spawned = True
         self.pub_primitive_tf()
+
+    def update_prim_spawned(self, state):
+        self.primitive_spawned = state
 
     def pause_sim(self):
         rospy.loginfo("PAUSING service found...")
