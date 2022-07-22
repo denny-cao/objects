@@ -41,6 +41,8 @@ if __name__ == "__main__":
     rospy.init_node("spawner")
 
     service = rospy.Service("spawn_amount", Spawn, spawn_cb)
+
+    rospy.spin()
     
 
 
