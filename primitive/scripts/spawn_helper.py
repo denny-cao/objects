@@ -4,6 +4,7 @@ import tf2_ros
 import xacro
 from geometry_msgs.msg import Vector3, Pose, TransformStamped, Point, Quaternion
 from gazebo_msgs.srv import SetModelConfiguration, SetModelConfigurationRequest, DeleteModel, DeleteModelRequest, SpawnModel, SpawnModelRequest, SpawnModelResponse
+from std_srvs.srv import Empty
 
 class sim_control_handler():
     def __init__(self):
@@ -13,6 +14,11 @@ class sim_control_handler():
         self.max_retry = 5
 
         # Proxies
+        self.unpause_proxy = rospy.ServiceProxy('/gazebo/unpause_physics', Empty)
+        self.pause_proxy = rospy.ServiceProxy('/gazebo/pause_physics', Empty)
+        self.reset_sim_proxy = rospy.ServiceProxy('/gazebo/reset_simulation', Empty)
+        self.reset_world_proxy = rospy.ServiceProxy('/gazebo/reset_world', Empty)
+       
         self.delete_model_proxy = rospy.ServiceProxy("/gazebo/delete_model", DeleteModel)
         self.spawn_model_proxy = rospy.ServiceProxy("/gazebo/spawn_urdf_model", SpawnModel)
 
