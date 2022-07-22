@@ -162,3 +162,8 @@ class Cylinder(Shape):
             'xacro:property[@name="length"]', namespaces).set("value", str(self.length))
 
         tree.write("shape.urdf.xacro")
+
+'''
+[ERROR] [1658525793.910571, 79.608000]: Error processing request: unsupported operand type(s) for -: 'NoneType' and 'float'
+['Traceback (most recent call last):\n', '  File "/opt/ros/melodic/lib/python2.7/dist-packages/rospy/impl/tcpros_service.py", line 633, in _handle_request\n    response = convert_return_to_response(self.handler(request), self.response_class)\n', '  File "spawner.py", line 43, in spawn_cb\n    self.rand_shape(link_states)\n', '  File "spawner.py", line 21, in rand_shape\n    shape.rand_dim()\n', '  File "/home/srlxprmntsleon/franka_ros_ws/src/objects/primitive/scripts/primitives.py", line 90, in rand_dim\n    max_dim_x, max_dim_y = super(Box, self).rand_dim()\n', '  File "/home/srlxprmntsleon/franka_ros_ws/src/objects/primitive/scripts/primitives.py", line 65, in rand_dim\n    max_dim_y = round((self.y - self.upper_bound_y) * 2 if abs(self.y - self.upper_bound_y) <= abs(self.y - self.lower_bound_y) else (self.lower_bound_y - self.y) * 2, ndigits=4)\n', "TypeError: unsupported operand type(s) for -: 'NoneType' and 'float'\n"]
+'''

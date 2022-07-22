@@ -1,10 +1,10 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="primitives">
   <xacro:property name="shape_name" value="Cylinder" /> 
-  <xacro:property name="length" value="0.1096" /> 
-  <xacro:property name="width" value="0.0896" /> 
-  <xacro:property name="height" value="0.2322" /> 
-  <xacro:property name="radius" value="0.1183" /> 
-  <xacro:property name="xyz" value="-0.5905 -0.5617 0.0548" /> 
+  <xacro:property name="length" value="0.1477" /> 
+  <xacro:property name="width" value="0.0418" /> 
+  <xacro:property name="height" value="0.358" /> 
+  <xacro:property name="radius" value="0.0684" /> 
+  <xacro:property name="xyz" value="-0.1892 0.2577 0.07385" /> 
   <xacro:property name="rpy" value="0 0 0" /> 
   <xacro:property name="mass" value="10" /> 
   
