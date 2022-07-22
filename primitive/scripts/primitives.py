@@ -21,7 +21,7 @@ class Shape(object):
         self.mass = mass
         self.x = self.y = self.z = None
 
-        self.largest_x = self.largest_y = self.largest_z = None
+        self.largest_z = None
         self.lower_bound_x = self.upper_bound_x = self.lower_bound_y = self.upper_bound_y = None
 
     @abstractmethod
