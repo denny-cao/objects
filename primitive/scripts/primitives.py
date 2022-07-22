@@ -9,10 +9,9 @@ namespaces = {"xacro": "http://www.ros.org/wiki/xacro"}
 ET.register_namespace("xacro", "http://www.ros.org/wiki/xacro")
 
 MAX_COORD= 0.5
-MIN_COORD = 0.1
-
+SAFETY_DIST = 0.05
 MAX_DIM = 0.4
-MIN_DIM = 0.005
+MIN_DIM = 0.05
 
 class Shape(object):
     __metaclass__ = ABCMeta
@@ -21,14 +20,47 @@ class Shape(object):
     def __init__(self, mass=10, x=None, y=None, z=None):
         self.mass = mass
         self.x = self.y = self.z = None
-    
+
+        self.largest_x = self.largest_y = self.largest_z = None
+        self.lower_bound_x = self.upper_bound_x = self.lower_bound_y = self.upper_bound_y = None
+
+    @abstractmethod
+    def rand_pos(self, msg):
+        # Get list of link positions
+        link_position = msg.pos[-1].position
+
+        largest_x = max([0, link_position.x])
+        largest_y = max([0, link_position.y])
+        self.largest_z = max(link.position.z for link in msg.pos)
+
+        # Generate random x-value
+        self.x = round(random.uniform(-MAX_COORD, MAX_COORD), ndigits=4)
+
+        # Boundaries
+        self.lower_bound_x = link_position.x - SAFETY_DIST if not largest_x else -SAFETY_DIST
+        self.upper_bound_x = link_position.x + SAFETY_DIST if largest_x else SAFETY_DIST
+
+        self.lower_bound_y = link_position.y - SAFETY_DIST - SAFETY_DIST if not largest_y else -SAFETY_DIST
+        self.upper_bound_y = link_position.y + SAFETY_DIST if largest_y else SAFETY_DIST
+
+        # Check if y-value needs to be bounded
+        if self.lower_bound_x <= self.x <= self.upper_bound_x:
+            # 50/50 sample from above or below boundary
+            if choice([0, 1]) and self.upper_bound_y < MAX_COORD - MIN_DIM:
+                self.y = random.uniform(self.upper_bound_y, MAX_COORD)
+            
+            elif self.lower_bound_y > -MAX_COORD + MIN_DIM:
+                self.y = random.uniform(-MAX_COORD, self.lower_bound_y)
+        else:
+            self.y = round(random.uniform(-MAX_COORD, MAX_COORD), ndigits=4)
+
     @abstractmethod
     def rand_dim(self):
-        pass
-    
-    @abstractmethod
-    def rand_pos(self):
-        pass
+        # Max_dim is a function of distance from boundary from center of shape
+        max_dim_x = round((self.x - self.upper_bound_x) * 2 if abs(self.x - self.upper_bound_x) >= abs(self.x - self.lower_bound_x) else (self.lower_bound_x - self.x) * 2, ndigits=4)
+        max_dim_y = round((self.y - self.upper_bound_y) * 2 if abs(self.y - self.upper_bound_y) >= abs(self.y - self.lower_bound_y) else (self.lower_bound_y - self.y) * 2, ndigits=4)
+        
+        return max_dim_x, max_dim_y
 
     @abstractmethod
     def show(self):
@@ -40,14 +72,6 @@ class Shape(object):
         tree.find('xacro:property[@name="shape_name"]', namespaces).set("value", self.__class__.__name__)
         return tree
     
-    def same_len(self, dist):
-        # Restrict 50/50 axis if length and width are the same
-        coord_1 = choice([round(random.uniform(MIN_COORD + dist, MAX_COORD + dist), ndigits=4),
-                          round(random.uniform(-MAX_COORD - dist, -MIN_COORD - dist), ndigits=4)])
-        coord_2 = round(random.uniform(-MAX_COORD - dist, MAX_COORD + dist), ndigits=4)
-
-        self.x, self.y = (coord_1, coord_2) if choice([0, 1]) else (coord_2, coord_1)
-
 class Box(Shape):
     def __init__(self, length=0, width=0, height=0, mass=10):
         super(Box, self).__init__()
@@ -55,28 +79,16 @@ class Box(Shape):
         self.width = width
         self.height = height
 
-    def rand_dim(self):
-        self.length = round(random.uniform(MIN_DIM, MAX_DIM), ndigits=4)
-        self.width = round(random.uniform(MIN_DIM, MAX_DIM), ndigits=4)
-        self.height = round(random.uniform(MIN_DIM, MAX_DIM), ndigits=4)
-        self.z = self.height / 2
-
     def rand_pos(self):
-        # Restrict axis 50/50
-        if self.width == self.length:
-            super(Box, self).same_len(dist=self.width / 2)
-        
-        # Restrict one axis
-        else:
-            self.diff_len()
-    
-    def diff_len(self):
-        self.x = round(random.uniform(-MAX_COORD - self.width / 2, MAX_COORD + self.width / 2), ndigits=4)
-        
-        if abs(self.x) - self.width / 2 < MIN_COORD:
-            self.y =  round(random.uniform(MIN_COORD + self.length, MAX_COORD + self.length), ndigits=4) if choice([0, 1]) else round(random.uniform(-MAX_COORD - self.length, -MIN_COORD - self.length), ndigits=4)
-        else:
-            self.y = round(random.uniform(-MIN_COORD - self.length, MAX_COORD + self.length), ndigits=4)
+        super(Box, self).rand_pos()
+
+    def rand_dim(self):
+        max_dim_x, max_dim_y = super(Box, self).rand_dim()
+
+        self.width = round(random.uniform(MIN_DIM, max_dim_x), ndigits=4)
+        self.length = round(random.uniform(MIN_DIM, max_dim_y), ndigits=4)
+        self.height = round(random.uniform(MIN_DIM, self.largest_z), ndigits=4)
+
     def show(self):
         tree = super(Box, self).show()
         tree.find(
@@ -94,12 +106,16 @@ class Sphere(Shape):
         super(Sphere, self).__init__()
         self.radius = radius
 
-    def rand_dim(self):
-        self.radius = round(random.uniform(MIN_DIM / 2, MAX_DIM / 2), ndigits=4)
-        self.z = self.radius
-
     def rand_pos(self):
-        super(Sphere, self).same_len(self.radius)
+        super(Sphere, self).rand_pos()
+
+    def rand_dim(self):
+        max_dim_x, max_dim_y = super(Sphere, self).rand_dim()
+
+        max_rad = max_dim_x / 2 if max_dim_x < max_dim_y else max_dim_y / 2
+        max_rad = self.largest_z if self.largest_z < max_rad else max_rad
+
+        self.radius = round(random.uniform(MIN_DIM, max_rad), ndigits=4)
 
     def show(self):
         tree = super(Sphere, self).show()
@@ -116,16 +132,16 @@ class Cylinder(Shape):
         self.radius = radius
         self.length = length
 
-    def diameter(self):
-        return self.radius * 2
+    def rand_pos(self):
+        super(Cylinder, self).rand_pos()
 
     def rand_dim(self):
-        self.radius = round(random.uniform(MIN_DIM / 2, MAX_DIM / 2), ndigits=4)
-        self.length = round(random.uniform(MIN_DIM / 2, MAX_DIM / 2), ndigits=4)
-        self.z = self.length / 2
+        max_dim_x, max_dim_y = super(Cylinder, self).rand_dim()
 
-    def rand_pos(self):
-        super(Cylinder, self).same_len(self.radius)
+        max_rad = max_dim_x / 2 if max_dim_x < max_dim_y else max_dim_y / 2
+
+        self.radius = round(random.uniform(MIN_DIM, max_rad), ndigits=4)
+        self.length = round(random.uniform(MIN_DIM, self.largest_z), ndigits=4)
 
     def show(self):
         tree = super(Cylinder, self).show()
