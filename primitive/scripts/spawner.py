@@ -14,6 +14,8 @@ class SpawnShape:
         self.number = 0
 
     def rand_shape(self, msg):
+        self.spawner.pause_sim()
+
         # Generate random primitive
         shape = choice([Box(), Sphere(), Cylinder()])
         
@@ -27,7 +29,6 @@ class SpawnShape:
             
         self.spawner.spawn_model()
 
-
     def spawn_cb(self, req):
 
         if self.spawner.primitive_spawned:
@@ -36,11 +37,8 @@ class SpawnShape:
             
         for number in range(1, req.amount + 1):    
             number += 1
-            link_states = rospy.wait_for_message("/gazebo/link_states", LinkStates)
-            self.spawner.pause_sim()
-
-            self.rand_shape(link_states) 
-
+            link_states = rospy.Subscriber("/gazebo/link_states", LinkStates, self.rand_shape)
+            link_states.unregister()
         self.spawner.unpause_sim()        
 
 if __name__ == "__main__":
