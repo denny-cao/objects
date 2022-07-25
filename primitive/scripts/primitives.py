@@ -1,4 +1,4 @@
-from numpy.random import default_random
+from numpy import random
 from abc import ABCMeta, abstractmethod
 import xml.etree.ElementTree as ET
 
