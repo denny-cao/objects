@@ -85,8 +85,8 @@ class Shape(object):
                                                      str(self.r) + " " + str(self.p) + " " + str(self.ya))
         tree.find('xacro:property[@name="shape_name"]', namespaces).set("value", self.name)
         tree.find('xacro:property[@name="mass"]', namespaces).set("value", str(self.mass))
-        tree.find('xacro:property[@name="mu"]', namespaces).set("value", self.mu)
-        tree.find('xacro:property[@name="mu2"]', namespaces).set("value", self.mu2)
+        tree.find('xacro:property[@name="mu"]', namespaces).set("value", str(self.mu))
+        tree.find('xacro:property[@name="mu2"]', namespaces).set("value", str(self.mu2))
    
         return tree
     
