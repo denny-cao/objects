@@ -30,15 +30,18 @@ class SpawnShape:
         self.spawner.spawn_model()
 
 
-    def spawn_cb(self, req):
-        link_states = rospy.wait_for_message("/gazebo/link_states", LinkStates)
-        
-        self.spawner.pause_sim()
-                
-        if self.spawner.primitive_spawned:
+    def spawn_cb(self, req):     
+        if self.spawner.primitive_spawned:  
+            self.spawner.pause_sim()  
             
             self.spawner.delete_models()
             self.number = 0
+
+            self.spawner.unpause_sim()
+
+        link_states = rospy.wait_for_message("/gazebo/link_states", LinkStates)
+
+        self.spawner.pause_sim()  
 
         for number in range(1, req.amount + 1):    
             self.number = number
