@@ -2,7 +2,6 @@ from numpy import random
 from abc import ABCMeta, abstractmethod
 import xml.etree.ElementTree as ET
 
-random = default_random()
 namespaces = {"xacro": "http://www.ros.org/wiki/xacro"}
 ET.register_namespace("xacro", "http://www.ros.org/wiki/xacro")
 
