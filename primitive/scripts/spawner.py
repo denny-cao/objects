@@ -13,9 +13,9 @@ class SpawnShape:
         self.spawner = sim_control_handler()
         self.number = None
 
-    def rand_shape(self, msg):
+    def rand_shape(self, msg, static):
         # Generate random primitive
-        shape = choice([Box(), Sphere(), Cylinder()])
+        shape = choice([Box(static=static), Sphere(static=static), Cylinder(static=static)])
         
         shape.rand_pos(msg)
         shape.rand_dim()
@@ -40,11 +40,17 @@ class SpawnShape:
         for number in range(1, req.amount + 1):    
             self.number = number
 
-            self.rand_shape(link_states) 
+            self.rand_shape(link_states, req.static) 
 
         self.spawner.update_prim_spawned(True)
+
+        response = SpawnResponse()
+        response.success = True
+
         self.spawner.unpause_sim()        
 
+        return response
+        
 if __name__ == "__main__":
     spawn = SpawnShape()
     rospy.init_node("spawner")

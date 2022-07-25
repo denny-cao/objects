@@ -1,5 +1,5 @@
+from math import pi
 from numpy import random
-from abc import ABCMeta, abstractmethod
 import xml.etree.ElementTree as ET
 
 namespaces = {"xacro": "http://www.ros.org/wiki/xacro"}
@@ -11,17 +11,27 @@ MAX_DIM = 0.2
 MIN_DIM = 0.05
 
 class Shape(object):
-    __metaclass__ = ABCMeta
+    def __init__(self, mass=10, x=None, y=None, z=None, mu=1.0, mu2 = 1.0, r=0, p=0, ya=0, static=True):
+        self.name = None
 
-    @abstractmethod
-    def __init__(self, mass=10, x=None, y=None, z=None, mu=1.0):
-        self.mass = mass
-        self.x = self.y = self.z = None
-
+        # Position
+        self.x = self.y = self.z = x, y, z
+        
         self.largest_z = None
         self.lower_bound_x = self.upper_bound_x = self.lower_bound_y = self.upper_bound_y = None
         self.max_dim_x = self.max_dim_y = None
-    @abstractmethod
+        
+        # Orientation
+        self.r, self.p, self.ya = r, p, ya
+
+        # Physics
+        self.mass = mass
+        self.mu = mu
+        self.mu2 = mu2
+
+        # Static or dynamic
+        self.static = static
+
     def rand_pos(self, msg):
         # Get end link position
         link_position = msg.pose[-1].position
@@ -48,46 +58,53 @@ class Shape(object):
         if self.lower_bound_x <= self.x <= self.upper_bound_x:
             # 50/50 sample from above or below boundary
             if random.choice([0, 1]) and self.upper_bound_y < MAX_COORD - MIN_DIM:
-                self.y = random.uniform(self.upper_bound_y, MAX_COORD)
+                self.y = round(random.uniform(self.upper_bound_y, MAX_COORD), ndigits=4)
             
             else:
-                self.y = random.uniform(-MAX_COORD, self.lower_bound_y)
+                self.y = round(random.uniform(-MAX_COORD, self.lower_bound_y), ndigits=4)
         else:
             self.y = round(random.uniform(-MAX_COORD, MAX_COORD), ndigits=4)
+        
+        # Change orientation for dynamic objects
+        if not self.static:
+            self.r = round(random.uniform(-pi, pi), ndigits=4)
+            self.p = round(random.uniform(-pi, pi), ndigits=4)
+            self.ya = round(random.uniform(-pi, pi), ndigits=4)
 
-    @abstractmethod
     def rand_dim(self):
         # Max_dim is a function of distance from boundary from center of shape
         self.max_dim_x = round((self.x - self.upper_bound_x) * 2 if abs(self.x - self.upper_bound_x) <= abs(self.x - self.lower_bound_x) else (self.lower_bound_x - self.x) * 2, ndigits=4)
         self.max_dim_y = round((self.y - self.upper_bound_y) * 2 if abs(self.y - self.upper_bound_y) <= abs(self.y - self.lower_bound_y) else (self.lower_bound_y - self.y) * 2, ndigits=4)
         
-    @abstractmethod
     def show(self):
         tree = ET.parse("shape.urdf.xacro")
 
-        tree.find('xacro:property[@name="mass"]', namespaces).set("value", str(self.mass))
         tree.find('xacro:property[@name="xyz"]', namespaces).set("value",
                                                      str(self.x) + " " + str(self.y) + " " + str(self.z))
-        tree.find('xacro:property[@name="shape_name"]', namespaces).set("value", self.__class__.__name__)
+        tree.find('xacro:property[@name="rpy"]', namespaces).set("value",
+                                                     str(self.r) + " " + str(self.p) + " " + str(self.ya))
+        tree.find('xacro:property[@name="shape_name"]', namespaces).set("value", self.name)
+        tree.find('xacro:property[@name="mass"]', namespaces).set("value", str(self.mass))
+        tree.find('xacro:property[@name="mu"]', namespaces).set("value", self.mu)
+        tree.find('xacro:property[@name="mu2"]', namespaces).set("value", self.mu2)
+   
         return tree
     
-    @abstractmethod
     def rand_mass(self):
-        pass
+        self.mass = round(random.uniform(2, 60), ndigits=4)
 
-    @abstractmethod
     def rand_friction(self):
-        pass
+        self.mu = round(random.uniform(0, 1), ndigits=4)
+        self.mu2 = self.mu    
     
 class Box(Shape):
-    def __init__(self, length=0, width=0, height=0, mass=10):
-        super(Box, self).__init__()
+    def __init__(self, length=0, width=0, height=0, mass=10, x=0, y=0, z=0, r=0, p=0, ya=0, static=True, mu=1.0, mu2=1.0):
+        super(Box, self).__init__(mass, x, y, z, mu, mu2, r, p, ya, static)
+        self.name = "Box"
+
         self.length = length
         self.width = width
         self.height = height
-
-    def rand_pos(self, msg):
-        super(Box, self).rand_pos(msg)
 
     def rand_dim(self):
         super(Box, self).rand_dim()
@@ -96,7 +113,7 @@ class Box(Shape):
         self.length = round(random.uniform(MIN_DIM, self.max_dim_y), ndigits=4)
         self.height = round(random.uniform(MIN_DIM, self.largest_z), ndigits=4)
 
-        self.z = self.height / 2
+        self.z = self.height / 2 if self.static else random.uniform(2, 10)
 
     def show(self):
         tree = super(Box, self).show()
@@ -108,21 +125,15 @@ class Box(Shape):
             'xacro:property[@name="height"]', namespaces).set("value", str(self.height))
 
         tree.write("shape.urdf.xacro")
-   
-    def rand_mass(self):
-        pass
-
-    def rand_friction(self):
-        pass
 
 class Sphere(Shape):
-    def __init__(self, radius=0, mass=10):
-        super(Sphere, self).__init__()
+    def __init__(self, radius=0, mass=10, x=0, y=0, z=0, r=0, p=0, ya=0, static=True, mu=1.0, mu2=1.0):
+        super(Sphere, self).__init__(mass, x, y, z, mu, mu2, r, p, ya, static)
+
+        self.name = "Sphere"
+
         self.radius = radius
-
-    def rand_pos(self, msg):
-        super(Sphere, self).rand_pos(msg)
-
+    
     def rand_dim(self):
         super(Sphere, self).rand_dim()
 
@@ -132,7 +143,7 @@ class Sphere(Shape):
 
         self.radius = round(random.uniform(MIN_DIM, max_rad), ndigits=4)
 
-        self.z = self.radius
+        self.z = self.radius if self.static else random.uniform(2, 10)
 
     def show(self):
         tree = super(Sphere, self).show()
@@ -142,20 +153,14 @@ class Sphere(Shape):
 
         tree.write("shape.urdf.xacro")
 
-    def rand_mass(self):
-        pass
-
-    def rand_friction(self):
-        pass
-
 class Cylinder(Shape):
-    def __init__(self, radius=0, length=0, mass=10):
-        super(Cylinder, self).__init__()
+    def __init__(self, radius=0, length=0, mass=10, x=0, y=0, z=0, r=0, p=0, ya=0, static=True, mu=1.0, mu2=1.0):
+        super(Cylinder, self).__init__(mass, x, y, z, mu, mu2, r, p, ya, static)
+        
+        self.name = "Cylinder"
+        
         self.radius = radius
         self.length = length
-
-    def rand_pos(self, msg):
-        super(Cylinder, self).rand_pos(msg)
 
     def rand_dim(self):
         super(Cylinder, self).rand_dim()
@@ -165,9 +170,9 @@ class Cylinder(Shape):
 
         self.radius = round(random.uniform(MIN_DIM, max_rad), ndigits=4)
         self.length = round(random.uniform(MIN_DIM, self.largest_z), ndigits=4)
-
-        self.z = self.length / 2
-
+        
+        self.z = self.length / 2 if self.static else random.uniform(2, 10)
+    
     def show(self):
         tree = super(Cylinder, self).show()
 
@@ -177,13 +182,3 @@ class Cylinder(Shape):
             'xacro:property[@name="length"]', namespaces).set("value", str(self.length))
 
         tree.write("shape.urdf.xacro")
-
-    def rand_mass(self):
-        pass
-
-    def rand_friction(self):
-        pass
-'''
-[ERROR] [1658525793.910571, 79.608000]: Error processing request: unsupported operand type(s) for -: 'NoneType' and 'float'
-['Traceback (most recent call last):\n', '  File "/opt/ros/melodic/lib/python2.7/dist-packages/rospy/impl/tcpros_service.py", line 633, in _handle_request\n    response = convert_return_to_response(self.handler(request), self.response_class)\n', '  File "spawner.py", line 43, in spawn_cb\n    self.rand_shape(link_states)\n', '  File "spawner.py", line 21, in rand_shape\n    shape.rand_dim()\n', '  File "/home/srlxprmntsleon/franka_ros_ws/src/objects/primitive/scripts/primitives.py", line 90, in rand_dim\n    max_dim_x, max_dim_y = super(Box, self).rand_dim()\n', '  File "/home/srlxprmntsleon/franka_ros_ws/src/objects/primitive/scripts/primitives.py", line 65, in rand_dim\n    max_dim_y = round((self.y - self.upper_bound_y) * 2 if abs(self.y - self.upper_bound_y) <= abs(self.y - self.lower_bound_y) else (self.lower_bound_y - self.y) * 2, ndigits=4)\n', "TypeError: unsupported operand type(s) for -: 'NoneType' and 'float'\n"]
-'''

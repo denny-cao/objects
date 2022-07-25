@@ -7,6 +7,10 @@
   <xacro:property name="xyz" value="-0.1892 0.2577 0.07385" /> 
   <xacro:property name="rpy" value="0 0 0" /> 
   <xacro:property name="mass" value="10" /> 
+  <xacro:property name="static" value="true" />
+  <xacro:property name="mu" value="1.0" />
+  <xacro:property name="mu2" value="1.0" />
+
   
   <xacro:include filename="$(find franka_description)/robots/utils.xacro" />
 
@@ -29,11 +33,18 @@
           <box size="${length} ${width} ${height}" />
         </geometry>
       </collision>
-    </link>
-    <gazebo>
-      <material>Gazebo/Blue</material>
-      <static>true</static>
+      <surface>
+        <friction>
+          <ode>
+            <mu>"${mu}"</mu>
+            <mu2>"${mu2}"</mu2>
+          </ode>
+        </friction>
+      </surface>
+      <gazebo>
+        <static>"${static}"</static>
     </gazebo>
+    </link>
   </xacro:if> 
 
   <xacro:if value="${shape_name == 'Sphere'}">
@@ -55,11 +66,18 @@
           <sphere radius="${radius}" />
         </geometry>
       </collision>
+      <surface>
+        <friction>
+          <ode>
+            <mu>"${mu}"</mu>
+            <mu2>"${mu2}"</mu2>
+          </ode>
+        </friction>
+      </surface>
+      <gazebo>
+        <static>"${static}"</static>
+      </gazebo>
     </link>
-    <gazebo>
-      <material>Gazebo/Blue</material>
-      <static>true</static>
-    </gazebo>
   </xacro:if> 
   
   <xacro:if value="${shape_name == 'Cylinder'}">
@@ -81,10 +99,17 @@
           <cylinder length="${length}" radius="${radius}" />
         </geometry>
       </collision>
+      <surface>
+        <friction>
+          <ode>
+            <mu>"${mu}"</mu>
+            <mu2>"${mu2}"</mu2>
+          </ode>
+        </friction>
+      </surface>
+      <gazebo>
+        <static>"${static}"</static>
+      </gazebo>
     </link>
-    <gazebo>
-      <material>Gazebo/Blue</material>
-      <static>true</static>
-    </gazebo>
   </xacro:if> 
 </robot>
