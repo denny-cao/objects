@@ -14,7 +14,7 @@ class Shape(object):
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    def __init__(self, mass=10, x=None, y=None, z=None):
+    def __init__(self, mass=10, x=None, y=None, z=None, mu=1.0):
         self.mass = mass
         self.x = self.y = self.z = None
 
@@ -66,10 +66,19 @@ class Shape(object):
         tree = ET.parse("shape.urdf.xacro")
 
         tree.find('xacro:property[@name="mass"]', namespaces).set("value", str(self.mass))
+        tree.find('xacro:property[@name="mu1')
         tree.find('xacro:property[@name="xyz"]', namespaces).set("value",
                                                      str(self.x) + " " + str(self.y) + " " + str(self.z))
         tree.find('xacro:property[@name="shape_name"]', namespaces).set("value", self.__class__.__name__)
         return tree
+    
+    @abstractmethod
+    def rand_mass(self):
+        pass
+
+    @abstractmethod
+    def rand_friction(self):
+        pass
     
 class Box(Shape):
     def __init__(self, length=0, width=0, height=0, mass=10):
@@ -111,6 +120,8 @@ class Sphere(Shape):
         super(Sphere, self).rand_pos(msg)
 
     def rand_dim(self):
+        super(Sphere, self).rand_dim()
+        
         max_rad = abs(self.max_dim_x / 2) if abs(self.max_dim_x) < abs(self.max_dim_y) else abs(self.max_dim_y / 2)
         max_rad = abs(self.largest_z) if abs(self.largest_z) < max_rad else max_rad
 
