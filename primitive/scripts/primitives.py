@@ -121,7 +121,7 @@ class Sphere(Shape):
 
     def rand_dim(self):
         super(Sphere, self).rand_dim()
-        
+
         max_rad = abs(self.max_dim_x / 2) if abs(self.max_dim_x) < abs(self.max_dim_y) else abs(self.max_dim_y / 2)
         max_rad = abs(self.largest_z) if abs(self.largest_z) < max_rad else max_rad
 
@@ -148,6 +148,8 @@ class Cylinder(Shape):
         super(Cylinder, self).rand_pos(msg)
 
     def rand_dim(self):
+        super(Cylinder, self).rand_dim()
+        
         max_rad = self.max_dim_x / 2 if self.max_dim_x < self.max_dim_y else self.max_dim_y / 2
 
         self.radius = round(random.uniform(MIN_DIM, max_rad), ndigits=4)
