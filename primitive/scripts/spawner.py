@@ -19,6 +19,8 @@ class SpawnShape:
         
         shape.rand_pos(msg)
         shape.rand_dim()
+        shape.rand_mass()
+        shape.rand_friction()
         shape.show()
 
         self.shape = shape
