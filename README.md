@@ -13,10 +13,10 @@ Python2.7
 python spawner.py
 ```
 - Create new service, spawn_amount
-- Argument: Amount (How Many Objects to Spawn [INT])
+- Arguments: Amount (How Many Objects to Spawn [INT], Static or Dynamic [BOOL])
 
 ```shell
-rosservice call \spawn_amount 3
+rosservice call \spawn_amount "{amount: 3, static: False}"
 ```
 
 ## TODO
