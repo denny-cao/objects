@@ -1,4 +1,5 @@
 int8 amount
+bool static
 ---
 bool success
 string error
