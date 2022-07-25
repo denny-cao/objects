@@ -109,7 +109,12 @@ class Box(Shape):
             'xacro:property[@name="height"]', namespaces).set("value", str(self.height))
 
         tree.write("shape.urdf.xacro")
+   
+    def rand_mass(self):
+        pass
 
+    def rand_friction(self):
+        pass
 
 class Sphere(Shape):
     def __init__(self, radius=0, mass=10):
@@ -137,6 +142,11 @@ class Sphere(Shape):
 
         tree.write("shape.urdf.xacro")
 
+    def rand_mass(self):
+        pass
+
+    def rand_friction(self):
+        pass
 
 class Cylinder(Shape):
     def __init__(self, radius=0, length=0, mass=10):
@@ -149,7 +159,7 @@ class Cylinder(Shape):
 
     def rand_dim(self):
         super(Cylinder, self).rand_dim()
-        
+
         max_rad = self.max_dim_x / 2 if self.max_dim_x < self.max_dim_y else self.max_dim_y / 2
 
         self.radius = round(random.uniform(MIN_DIM, max_rad), ndigits=4)
@@ -167,6 +177,11 @@ class Cylinder(Shape):
 
         tree.write("shape.urdf.xacro")
 
+    def rand_mass(self):
+        pass
+
+    def rand_friction(self):
+        pass
 '''
 [ERROR] [1658525793.910571, 79.608000]: Error processing request: unsupported operand type(s) for -: 'NoneType' and 'float'
 ['Traceback (most recent call last):\n', '  File "/opt/ros/melodic/lib/python2.7/dist-packages/rospy/impl/tcpros_service.py", line 633, in _handle_request\n    response = convert_return_to_response(self.handler(request), self.response_class)\n', '  File "spawner.py", line 43, in spawn_cb\n    self.rand_shape(link_states)\n', '  File "spawner.py", line 21, in rand_shape\n    shape.rand_dim()\n', '  File "/home/srlxprmntsleon/franka_ros_ws/src/objects/primitive/scripts/primitives.py", line 90, in rand_dim\n    max_dim_x, max_dim_y = super(Box, self).rand_dim()\n', '  File "/home/srlxprmntsleon/franka_ros_ws/src/objects/primitive/scripts/primitives.py", line 65, in rand_dim\n    max_dim_y = round((self.y - self.upper_bound_y) * 2 if abs(self.y - self.upper_bound_y) <= abs(self.y - self.lower_bound_y) else (self.lower_bound_y - self.y) * 2, ndigits=4)\n', "TypeError: unsupported operand type(s) for -: 'NoneType' and 'float'\n"]
