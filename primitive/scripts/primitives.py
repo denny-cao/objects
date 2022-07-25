@@ -10,7 +10,7 @@ ET.register_namespace("xacro", "http://www.ros.org/wiki/xacro")
 
 MAX_COORD= 0.5
 SAFETY_DIST = 0.1
-MAX_DIM = 0.4
+MAX_DIM = 0.3
 MIN_DIM = 0.05
 
 class Shape(object):
@@ -53,7 +53,7 @@ class Shape(object):
             if choice([0, 1]) and self.upper_bound_y < MAX_COORD - MIN_DIM:
                 self.y = random.uniform(self.upper_bound_y, MAX_COORD)
             
-            elif self.lower_bound_y > -MAX_COORD + MIN_DIM:
+            else:
                 self.y = random.uniform(-MAX_COORD, self.lower_bound_y)
         else:
             self.y = round(random.uniform(-MAX_COORD, MAX_COORD), ndigits=4)
