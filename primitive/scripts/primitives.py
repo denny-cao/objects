@@ -7,7 +7,7 @@ ET.register_namespace("xacro", "http://www.ros.org/wiki/xacro")
 
 MAX_COORD= 0.5
 SAFETY_DIST = 0.1
-MAX_DIM = 0.2
+MAX_DIM = 0.1
 MIN_DIM = 0.05
 
 class Shape(object):
@@ -113,7 +113,7 @@ class Box(Shape):
         self.length = round(random.uniform(MIN_DIM, self.max_dim_y), ndigits=4)
         self.height = round(random.uniform(MIN_DIM, self.largest_z), ndigits=4)
 
-        self.z = self.height / 2 if self.static else random.uniform(1.0, 2.0)
+        self.z = self.height / 2 if self.static else random.uniform(2.0, 3.0)
 
     def show(self):
         tree = super(Box, self).show()
@@ -165,7 +165,7 @@ class Cylinder(Shape):
     def rand_dim(self):
         super(Cylinder, self).rand_dim()
 
-        max_rad = self.max_dim_x / 2 if self.max_dim_x < self.max_dim_y else self.max_dim_y / 2
+        max_rad = abs(self.max_dim_x / 2) if abs(self.max_dim_x < self.max_dim_y) else abs(self.max_dim_y / 2)
         max_rad /= 2
 
         self.radius = round(random.uniform(MIN_DIM, max_rad), ndigits=4)
