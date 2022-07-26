@@ -14,14 +14,12 @@ class SpawnShape:
         self.number = None
 
     def rand_shape(self, msg, static):
-        # Generate random primitive
-        self.shape = choice([Box(static=static), Sphere(static=static), Cylinder(static=static)])
+        # Generate cylinder primitive
+        self.shape = Cylinder(radius=-0.17, length=0.08, mass=1, static=False)
         
         self.shape.rand_pos(msg)
-        self.shape.rand_dim()
-        self.shape.rand_mass()
-        self.shape.rand_friction()
-        self.shape.show()
+
+        self.shape.show
 
         self.spawner.update_shape(self.shape, self.number)
             
