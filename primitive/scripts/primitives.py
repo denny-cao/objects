@@ -73,8 +73,8 @@ class Shape(object):
 
     def rand_dim(self):
         # Max_dim is a function of distance from boundary from center of shape
-        self.max_dim_x = round((self.x - self.upper_bound_x) * 2 if abs(self.x - self.upper_bound_x) <= abs(self.x - self.lower_bound_x) else (self.lower_bound_x - self.x) * 2, ndigits=4)
-        self.max_dim_y = round((self.y - self.upper_bound_y) * 2 if abs(self.y - self.upper_bound_y) <= abs(self.y - self.lower_bound_y) else (self.lower_bound_y - self.y) * 2, ndigits=4)
+        self.max_dim_x = abs(round((self.x - self.upper_bound_x)) * 2 if abs(self.x - self.upper_bound_x) <= abs(self.x - self.lower_bound_x) else (self.lower_bound_x - self.x) * 2, ndigits=4)
+        self.max_dim_y = abs(round((self.y - self.upper_bound_y)) * 2 if abs(self.y - self.upper_bound_y) <= abs(self.y - self.lower_bound_y) else (self.lower_bound_y - self.y) * 2, ndigits=4)
         
     def show(self):
         tree = ET.parse("shape.urdf.xacro")
@@ -137,8 +137,8 @@ class Sphere(Shape):
     def rand_dim(self):
         super(Sphere, self).rand_dim()
 
-        max_rad = abs(self.max_dim_x / 2) if abs(self.max_dim_x) < abs(self.max_dim_y) else abs(self.max_dim_y / 2)
-        max_rad = abs(self.largest_z) if abs(self.largest_z) < max_rad else max_rad
+        max_rad = self.max_dim_x / 2 if self.max_dim_x < self.max_dim_y else self.max_dim_y / 2
+        max_rad = self.largest_z if self.largest_z < max_rad else max_rad
         max_rad /= 2
 
         self.radius = round(random.uniform(MIN_DIM, max_rad), ndigits=4)
@@ -165,7 +165,7 @@ class Cylinder(Shape):
     def rand_dim(self):
         super(Cylinder, self).rand_dim()
 
-        max_rad = abs(self.max_dim_x / 2) if abs(self.max_dim_x < self.max_dim_y) else abs(self.max_dim_y / 2)
+        max_rad = self.max_dim_x / 2 if self.max_dim_x < self.max_dim_y else self.max_dim_y / 2
         max_rad /= 2
 
         self.radius = round(random.uniform(MIN_DIM, max_rad), ndigits=4)
