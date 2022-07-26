@@ -85,7 +85,7 @@
       <inertial>
         <origin rpy="${rpy}" xyz="${xyz}" />
         <mass value="${mass}" />
-        <xacro:cylinder_inertia_def length="${length}" mass="${mass}" radius="${radius}" />
+        <xacro:inertia-cylinder h="${length}" mass="${mass}" radius="${radius}" />
       </inertial>
       <visual>
         <origin rpy="${rpy}" xyz="${xyz}" />
