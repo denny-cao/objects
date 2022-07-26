@@ -91,7 +91,7 @@ class Shape(object):
         return tree
     
     def rand_mass(self):
-        self.mass = round(random.uniform(2, 60), ndigits=4)
+        self.mass = round(random.uniform(0, 2), ndigits=4)
 
     def rand_friction(self):
         self.mu = round(random.uniform(0, 1), ndigits=4)
