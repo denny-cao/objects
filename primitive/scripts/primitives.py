@@ -91,11 +91,11 @@ class Shape(object):
         return tree
     
     def rand_mass(self):
-        self.mass = round(random.uniform(0, 2), ndigits=4)
+        self.mass = round(random.uniform(0.0, 2.0), ndigits=4)
 
     def rand_friction(self):
-        self.mu = round(random.uniform(0, 1), ndigits=4)
-        self.mu2 = self.mu    
+        self.mu = random.uniform(0, 2/(9.8*self.mass))
+        self.mu2 = self.mu
     
 class Box(Shape):
     def __init__(self, length=0, width=0, height=0, mass=10, x=0, y=0, z=0, r=0, p=0, ya=0, static=True, mu=1.0, mu2=1.0):
