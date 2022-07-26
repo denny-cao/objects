@@ -113,7 +113,7 @@ class Box(Shape):
         self.length = round(random.uniform(MIN_DIM, self.max_dim_y), ndigits=4)
         self.height = round(random.uniform(MIN_DIM, self.largest_z), ndigits=4)
 
-        self.z = self.height / 2 if self.static else random.uniform(2, 3)
+        self.z = self.height / 2 if self.static else random.uniform(1.0, 2.0)
 
     def show(self):
         tree = super(Box, self).show()
