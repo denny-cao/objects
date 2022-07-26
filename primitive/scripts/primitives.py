@@ -73,8 +73,8 @@ class Shape(object):
 
     def rand_dim(self):
         # Max_dim is a function of distance from boundary from center of shape
-        self.max_dim_x = abs(round((self.x - self.upper_bound_x)) * 2 if abs(self.x - self.upper_bound_x) <= abs(self.x - self.lower_bound_x) else (self.lower_bound_x - self.x) * 2, ndigits=4)
-        self.max_dim_y = abs(round((self.y - self.upper_bound_y)) * 2 if abs(self.y - self.upper_bound_y) <= abs(self.y - self.lower_bound_y) else (self.lower_bound_y - self.y) * 2, ndigits=4)
+        self.max_dim_x = round(abs((self.x - self.upper_bound_x)) * 2 if abs(self.x - self.upper_bound_x) <= abs(self.x - self.lower_bound_x) else (abs(self.lower_bound_x - self.x)) * 2, ndigits=4)
+        self.max_dim_y = round(abs((self.y - self.upper_bound_y)) * 2 if abs(self.y - self.upper_bound_y) <= abs(self.y - self.lower_bound_y) else (abs(self.lower_bound_y - self.y)) * 2, ndigits=4)
         
     def show(self):
         tree = ET.parse("shape.urdf.xacro")
