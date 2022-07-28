@@ -41,9 +41,6 @@
           </ode>
         </friction>
       </surface>
-      <gazebo>
-        <static>"${static}"</static>
-    </gazebo>
     </link>
   </xacro:if> 
 
@@ -74,9 +71,6 @@
           </ode>
         </friction>
       </surface>
-      <gazebo>
-        <static>"${static}"</static>
-      </gazebo>
     </link>
   </xacro:if> 
   
@@ -107,9 +101,10 @@
           </ode>
         </friction>
       </surface>
-      <gazebo>
-        <static>"${static}"</static>
-      </gazebo>
     </link>
   </xacro:if> 
+
+  <gazebo>
+    <static>${static}</static>
+  </gazebo>
 </robot>

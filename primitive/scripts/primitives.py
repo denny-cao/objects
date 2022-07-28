@@ -79,6 +79,7 @@ class Shape(object):
     def show(self):
         tree = ET.parse("shape.urdf.xacro")
 
+        tree.find('xacro:property[@name="static"]', namespaces).set("value", str(self.static))
         tree.find('xacro:property[@name="xyz"]', namespaces).set("value",
                                                      str(self.x) + " " + str(self.y) + " " + str(self.z))
         tree.find('xacro:property[@name="rpy"]', namespaces).set("value",
