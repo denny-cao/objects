@@ -1,4 +1,4 @@
-from math import pi
+from math import pi, sqrt
 from numpy import random
 import xml.etree.ElementTree as ET
 from partition import Partition
@@ -9,10 +9,14 @@ ET.register_namespace("xacro", "http://www.ros.org/wiki/xacro")
 MAX_COORD = 0.5
 MIN_DIM = 0.05
 MAX_DIM = 0.2
+PARTITION_COUNT = 100
+SAFETY_DIST = 0.05
+SAFETY_PANDA_DIST = 0.15
 
 class Shape(object):
-    def __init__(self, mass=10, x=None, y=None, z=None, mu=1.0, mu2 = 1.0, r=0, p=0, ya=0, static=True):
+    def __init__(self, number, mass=10, x=None, y=None, z=None, mu=1.0, mu2 = 1.0, r=0, p=0, ya=0, static=True):
         self.name = None
+        self.number = number
 
         # Position
         self.x = self.y = self.z = x, y, z
@@ -32,14 +36,18 @@ class Shape(object):
         # Static or dynamic
         self.static = static
 
-    def rand_pos(self, Partition):
-        '''
-        Place object in random location in a partition
-        '''
-        
-        Partition.rand_pos(MIN_DIM)
-        self.x, self.y, self.z = Partition.x, Partition.y, Partition.z
+        # Place shape in Partition
+        partition = Partition(number=self.number, column=self.rand_column())
 
+        partition.
+
+    def rand_column(self):
+        '''
+        Place object in random partition column
+        '''
+
+        return random.choice(range(1, int(sqrt(PARTITION_COUNT)) + 1))
+        
     def rand_dim(self, Partition):
         '''
         Generate maximum dimensions for implementations in subclasses 
