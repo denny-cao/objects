@@ -14,17 +14,10 @@ SAFETY_DIST = 0.05
 SAFETY_PANDA_DIST = 0.15
 
 class Shape(object):
-    def __init__(self, number, mass=10, x=None, y=None, z=None, mu=1.0, mu2 = 1.0, r=0, p=0, ya=0, static=True):
+    def __init__(self, number, msg, mass=10, mu=1.0, mu2 = 1.0, r=0, p=0, ya=0, static=True, random=True):
         self.name = None
         self.number = number
 
-        # Position
-        self.x = self.y = self.z = x, y, z
-        
-        self.largest_z = None
-        self.lower_bound_x = self.upper_bound_x = self.lower_bound_y = self.upper_bound_y = None
-        self.max_dim_x = self.max_dim_y = self.max_dim_z = None
-        
         # Orientation
         self.r, self.p, self.ya = r, p, ya
 
@@ -35,11 +28,20 @@ class Shape(object):
 
         # Static or dynamic
         self.static = static
-
+        
         # Place shape in Partition
         partition = Partition(number=self.number, column=self.rand_column())
 
-        partition.
+        partition.bounds(msg)
+        partition.rand_pos()
+        partition.max_len()
+
+        # Position
+        self.x, self.y = partition.x, partition.y
+        
+        # Maximum Dimensions
+        self.max_dim_x, self.max_dim_y = partition.max_dim_x, partition.max_dim_y
+        self.max_dim_z = MAX_DIM
 
     def rand_column(self):
         '''
@@ -47,14 +49,6 @@ class Shape(object):
         '''
 
         return random.choice(range(1, int(sqrt(PARTITION_COUNT)) + 1))
-        
-    def rand_dim(self, Partition):
-        '''
-        Generate maximum dimensions for implementations in subclasses 
-        '''
-        
-        Partition.max_len(MAX_DIM)
-        self.max_dim_x, self.max_dim_y, self.max_dim_z = Partition.max_dim_x, Partition.max_dim_y, Partition.max_dim_z 
 
     def show(self):
         '''
@@ -90,10 +84,8 @@ class Box(Shape):
         self.length = length
         self.width = width
         self.height = height
-
+    
     def rand_dim(self):
-        super(Box, self).rand_dim()
-
         self.width = round(random.uniform(MIN_DIM, self.max_dim_x), ndigits=4)
         self.length = round(random.uniform(MIN_DIM, self.max_dim_y), ndigits=4)
         self.height = round(random.uniform(MIN_DIM, self.max_dim_z), ndigits=4)
