@@ -7,6 +7,9 @@ import rospy
 from primitive_msgs.srv import Spawn, SpawnRequest, SpawnResponse
 from gazebo_msgs.msg import LinkStates
 
+# import rospkg
+# import os 
+
 class SpawnShape:
     def __init__(self):
         self.shape = None
@@ -17,7 +20,7 @@ class SpawnShape:
         # Generate random primitive
         self.shape = choice([Box(static=static), Sphere(static=static), Cylinder(static=static)])
         
-        self.shape.rand_pos(msg)
+        self.shape.sample_pose(msg)
         self.shape.rand_dim()
         self.shape.rand_mass()
         self.shape.rand_friction()
@@ -61,6 +64,9 @@ if __name__ == "__main__":
 
     service = rospy.Service("spawn_amount", Spawn, spawn.spawn_cb)
 
+    # rospack = rospkg.RosPack()
+    # base_shape_urdf_path = os.path.join(rospack.get_path('primitive'), 'description', 'shape.urdf.xacro')
+    # print(base_shape_urdf_path)
     rospy.spin()
     
 

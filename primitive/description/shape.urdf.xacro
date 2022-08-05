@@ -3,13 +3,13 @@
   <xacro:property name="length" value="0.0575" /> 
   <xacro:property name="width" value="0.0623" /> 
   <xacro:property name="height" value="0.0776" /> 
-  <xacro:property name="radius" value="0.0477" /> 
-  <xacro:property name="xyz" value="0.1581 0.1304 0.0477" /> 
-  <xacro:property name="rpy" value="-2.6599 0.7731 -2.7148" /> 
-  <xacro:property name="mass" value="0.7116" /> 
+  <xacro:property name="radius" value="0.0416" /> 
+  <xacro:property name="xyz" value="0.0312 0.2264 0.0416" /> 
+  <xacro:property name="rpy" value="-2.8661 2.4076 2.2146" /> 
+  <xacro:property name="mass" value="1.902" /> 
   <xacro:property name="static" value="True" />
-  <xacro:property name="mu" value="1.82721656643" />
-  <xacro:property name="mu2" value="1.82721656643" />
+  <xacro:property name="mu" value="0.517057138131" />
+  <xacro:property name="mu2" value="0.517057138131" />
 
   
   <xacro:include filename="$(find franka_description)/robots/utils.xacro" />

@@ -72,7 +72,6 @@
 
     <param name="m_ee" value="0.76" if="$(eval end_effector == 'hand')" />
 
-
     <node name="$(arg arm_id)_model_spawner"
           pkg="gazebo_ros"
           type="spawn_model"

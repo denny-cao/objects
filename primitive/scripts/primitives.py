@@ -1,12 +1,16 @@
 from math import pi
 from numpy import random
 import xml.etree.ElementTree as ET
+import rospkg
+import os 
+
 
 namespaces = {"xacro": "http://www.ros.org/wiki/xacro"}
 ET.register_namespace("xacro", "http://www.ros.org/wiki/xacro")
 
-MAX_COORD= 0.5
-SAFETY_DIST = 0.1
+
+MAX_COORD= 0.3
+SAFETY_DIST = 0.05
 MAX_DIM = 0.1
 MIN_DIM = 0.05
 
@@ -32,17 +36,10 @@ class Shape(object):
         # Static or dynamic
         self.static = static
 
-    def rand_pos(self, msg):
-        # Get end link position
-        link_position = msg.pose[-1].position
+        self.rospack = rospkg.RosPack()
+        self.base_shape_urdf_path = os.path.join(self.rospack.get_path('primitive'), 'description', 'shape.urdf.xacro')
+    def denny_sample_pos(self, link_position, largest_x, largest_y):
 
-        largest_x = max([0, link_position.x])
-        largest_y = max([0, link_position.y])
-        # Get z-value of end link
-        self.largest_z = msg.pose[-1].position.z
-        # Limit z-value to MAX_DIM
-        if self.largest_z > MAX_DIM:
-            self.largest_z = MAX_DIM
 
         # Generate random x-value
         self.x = round(random.uniform(-MAX_COORD, MAX_COORD), ndigits=4)
@@ -64,12 +61,31 @@ class Shape(object):
                 self.y = round(random.uniform(-MAX_COORD, self.lower_bound_y), ndigits=4)
         else:
             self.y = round(random.uniform(-MAX_COORD, MAX_COORD), ndigits=4)
-        
+
+
+    def sample_pose(self, msg):
+        # Get end link position
+        link_position = msg.pose[-1].position
+
+        largest_x = max([0, link_position.x])
+        largest_y = max([0, link_position.y])
+        # Get z-value of end link
+        self.largest_z = msg.pose[-1].position.z
+        # Limit z-value to MAX_DIM
+        if self.largest_z > MAX_DIM:
+            self.largest_z = MAX_DIM
+
+        # sample position
+        self.denny_sample_pos(link_position, largest_x, largest_y)
         # Change orientation for dynamic objects
-        if not self.static:
-            self.r = round(random.uniform(-pi, pi), ndigits=4)
-            self.p = round(random.uniform(-pi, pi), ndigits=4)
-            self.ya = round(random.uniform(-pi, pi), ndigits=4)
+        # if not self.static:
+        self.r = round(random.uniform(-pi, pi), ndigits=4)
+        self.p = round(random.uniform(-pi, pi), ndigits=4)
+        self.ya = round(random.uniform(-pi, pi), ndigits=4)
+    
+    def unif_sample_circle(self, radius):
+        pass
+        #TODO
 
     def rand_dim(self):
         # Max_dim is a function of distance from boundary from center of shape
@@ -77,7 +93,7 @@ class Shape(object):
         self.max_dim_y = round(abs((self.y - self.upper_bound_y)) * 2 if abs(self.y - self.upper_bound_y) <= abs(self.y - self.lower_bound_y) else (abs(self.lower_bound_y - self.y)) * 2, ndigits=4)
         
     def show(self):
-        tree = ET.parse("shape.urdf.xacro")
+        tree = ET.parse(self.base_shape_urdf_path)
 
         tree.find('xacro:property[@name="static"]', namespaces).set("value", str(self.static))
         tree.find('xacro:property[@name="xyz"]', namespaces).set("value",
@@ -92,11 +108,50 @@ class Shape(object):
         return tree
     
     def rand_mass(self):
-        self.mass = round(random.uniform(0.0, 2.0), ndigits=4)
+        self.mass = round(random.uniform(0.0, 5.0), ndigits=4)
 
     def rand_friction(self):
-        self.mu = random.uniform(0, 2/(9.8*self.mass))
+        self.mu = random.uniform(0, 2.0)
         self.mu2 = self.mu
+
+    # def rand_pos_denny(self, msg):
+    #     # Get end link position
+    #     link_position = msg.pose[-1].position
+
+    #     largest_x = max([0, link_position.x])
+    #     largest_y = max([0, link_position.y])
+    #     # Get z-value of end link
+    #     self.largest_z = msg.pose[-1].position.z
+    #     # Limit z-value to MAX_DIM
+    #     if self.largest_z > MAX_DIM:
+    #         self.largest_z = MAX_DIM
+
+    #     # Generate random x-value
+    #     self.x = round(random.uniform(-MAX_COORD, MAX_COORD), ndigits=4)
+
+    #     # Boundaries
+    #     self.lower_bound_x = link_position.x - SAFETY_DIST if not largest_x else -SAFETY_DIST
+    #     self.upper_bound_x = link_position.x + SAFETY_DIST if largest_x else SAFETY_DIST
+
+    #     self.lower_bound_y = link_position.y - SAFETY_DIST if not largest_y else -SAFETY_DIST
+    #     self.upper_bound_y = link_position.y + SAFETY_DIST if largest_y else SAFETY_DIST
+
+    #     # Check if y-value needs to be bounded
+    #     if self.lower_bound_x <= self.x <= self.upper_bound_x:
+    #         # 50/50 sample from above or below boundary
+    #         if random.choice([0, 1]) and self.upper_bound_y < MAX_COORD - MIN_DIM:
+    #             self.y = round(random.uniform(self.upper_bound_y, MAX_COORD), ndigits=4)
+            
+    #         else:
+    #             self.y = round(random.uniform(-MAX_COORD, self.lower_bound_y), ndigits=4)
+    #     else:
+    #         self.y = round(random.uniform(-MAX_COORD, MAX_COORD), ndigits=4)
+        
+    #     # Change orientation for dynamic objects
+    #     # if not self.static:
+    #     self.r = round(random.uniform(-pi, pi), ndigits=4)
+    #     self.p = round(random.uniform(-pi, pi), ndigits=4)
+    #     self.ya = round(random.uniform(-pi, pi), ndigits=4)
     
 class Box(Shape):
     def __init__(self, length=0, width=0, height=0, mass=10, x=0, y=0, z=0, r=0, p=0, ya=0, static=True, mu=1.0, mu2=1.0):
