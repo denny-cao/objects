@@ -38,18 +38,19 @@ class Shape(object):
 
         self.rospack = rospkg.RosPack()
         self.base_shape_urdf_path = os.path.join(self.rospack.get_path('primitive'), 'description', 'shape.urdf.xacro')
-    def denny_sample_pos(self, link_position, largest_x, largest_y):
+  
+    def denny_sample_pos(self, O_p_EE, largest_x, largest_y):
 
 
         # Generate random x-value
         self.x = round(random.uniform(-MAX_COORD, MAX_COORD), ndigits=4)
 
         # Boundaries
-        self.lower_bound_x = link_position.x - SAFETY_DIST if not largest_x else -SAFETY_DIST
-        self.upper_bound_x = link_position.x + SAFETY_DIST if largest_x else SAFETY_DIST
+        self.lower_bound_x = O_p_EE[0] - SAFETY_DIST if not largest_x else -SAFETY_DIST
+        self.upper_bound_x = O_p_EE[0] + SAFETY_DIST if largest_x else SAFETY_DIST
 
-        self.lower_bound_y = link_position.y - SAFETY_DIST if not largest_y else -SAFETY_DIST
-        self.upper_bound_y = link_position.y + SAFETY_DIST if largest_y else SAFETY_DIST
+        self.lower_bound_y = O_p_EE[1] - SAFETY_DIST if not largest_y else -SAFETY_DIST
+        self.upper_bound_y = O_p_EE[1] + SAFETY_DIST if largest_y else SAFETY_DIST
 
         # Check if y-value needs to be bounded
         if self.lower_bound_x <= self.x <= self.upper_bound_x:
@@ -62,21 +63,21 @@ class Shape(object):
         else:
             self.y = round(random.uniform(-MAX_COORD, MAX_COORD), ndigits=4)
 
-
-    def sample_pose(self, msg):
+    def sample_pose(self, O_T_EE):
         # Get end link position
-        link_position = msg.pose[-1].position
-
-        largest_x = max([0, link_position.x])
-        largest_y = max([0, link_position.y])
+        # link_position = msg.pose[-1].position
+        O_p_EE = O_T_EE[:3, -1]
+        
+        largest_x = max([0, O_p_EE[0]])
+        largest_y = max([0, O_p_EE[1]])
         # Get z-value of end link
-        self.largest_z = msg.pose[-1].position.z
+        self.largest_z = O_p_EE[-1]
         # Limit z-value to MAX_DIM
         if self.largest_z > MAX_DIM:
             self.largest_z = MAX_DIM
 
         # sample position
-        self.denny_sample_pos(link_position, largest_x, largest_y)
+        self.denny_sample_pos(O_p_EE, largest_x, largest_y)
         # Change orientation for dynamic objects
         # if not self.static:
         self.r = round(random.uniform(-pi, pi), ndigits=4)
