@@ -10,9 +10,18 @@
   <xacro:property name="static" value="true" />
   <xacro:property name="mu" value="1.0" />
   <xacro:property name="mu2" value="1.0" />
+  <xacro:property name="ef" value="false" />
 
   
   <xacro:include filename="$(find franka_description)/robots/utils.xacro" />
+
+  <xacro:if value="${ef}"> 
+    <joint name="${shape_name}_joint" type="fixed">
+          <parent link="panda_link8"/>
+          <child link="${shape_name}"/>
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+    </joint>
+  </xacro:if>
 
   <xacro:if value="${shape_name == 'Box'}">
     <link name="Box"> 
@@ -30,7 +39,7 @@
       <collision>
         <origin rpy="${rpy}" xyz="${xyz}" />
         <geometry>
-          <box size="${length} ${width} ${height}" />
+          <box size="${length} ${width} ${heigh.t}" />
         </geometry>
       </collision>
       <surface>
@@ -42,6 +51,13 @@
         </friction>
       </surface>
     </link>
+    
+    <joint name="panda_tip_joint" type="fixed">
+      <parent link="Box"/>
+      <child link="panda_tip"/>
+      <origin xyz="0 0 $(0.785398163397 - {length} / 2)" rpy="0 0 0"/>
+    </joint>
+    <link name="$panda_tip">
   </xacro:if> 
 
   <xacro:if value="${shape_name == 'Sphere'}">
@@ -72,6 +88,13 @@
         </friction>
       </surface>
     </link>
+  
+    <joint name="panda_tip_joint" type="fixed">
+      <parent link="Sphere"/>
+      <child link="panda_tip"/>
+      <origin xyz="0 0 $(0.785398163397 - {radius})" rpy="0 0 0"/>
+   </joint>
+    <link name="$panda_tip">
   </xacro:if> 
   
   <xacro:if value="${shape_name == 'Cylinder'}">
@@ -102,6 +125,13 @@
         </friction>
       </surface>
     </link>
+
+    <joint name="panda_tip_joint" type="fixed">
+      <parent link="Cylinder"/>
+      <child link="panda_tip"/>
+      <origin xyz="0 0 $(0.785398163397 - {length} / 2)" rpy="0 0 0"/>
+    </joint>
+    <link name="$panda_tip">
   </xacro:if> 
 
   <gazebo>

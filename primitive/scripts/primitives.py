@@ -11,7 +11,7 @@ MAX_DIM = 0.1
 MIN_DIM = 0.05
 
 class Shape(object):
-    def __init__(self, mass=10, x=None, y=None, z=None, mu=1.0, mu2 = 1.0, r=0, p=0, ya=0, static=True):
+    def __init__(self, ef, mass=10, x=None, y=None, z=None, mu=1.0, mu2 = 1.0, r=0, p=0, ya=0, static=True):
         self.name = None
 
         # Position
@@ -31,6 +31,9 @@ class Shape(object):
 
         # Static or dynamic
         self.static = static
+
+        # Is the object on the end effector?
+        self.ef = ef
 
     def rand_pos(self, msg):
         # Get end link position
@@ -72,10 +75,13 @@ class Shape(object):
             self.ya = round(random.uniform(-pi, pi), ndigits=4)
 
     def rand_dim(self):
-        # Max_dim is a function of distance from boundary from center of shape
-        self.max_dim_x = round(abs((self.x - self.upper_bound_x)) * 2 if abs(self.x - self.upper_bound_x) <= abs(self.x - self.lower_bound_x) else (abs(self.lower_bound_x - self.x)) * 2, ndigits=4)
-        self.max_dim_y = round(abs((self.y - self.upper_bound_y)) * 2 if abs(self.y - self.upper_bound_y) <= abs(self.y - self.lower_bound_y) else (abs(self.lower_bound_y - self.y)) * 2, ndigits=4)
-        
+        # Max_dim is a function of distance from boundary from center of shapei
+        if self.ef:
+            self.max_dim_x = self.max_dim_y = MAX_DIM
+        else:
+            self.max_dim_x = round(abs((self.x - self.upper_bound_x)) * 2 if abs(self.x - self.upper_bound_x) <= abs(self.x - self.lower_bound_x) else (abs(self.lower_bound_x - self.x)) * 2, ndigits=4)
+            self.max_dim_y = round(abs((self.y - self.upper_bound_y)) * 2 if abs(self.y - self.upper_bound_y) <= abs(self.y - self.lower_bound_y) else (abs(self.lower_bound_y - self.y)) * 2, ndigits=4)
+            
     def show(self):
         tree = ET.parse("shape.urdf.xacro")
 
@@ -88,6 +94,7 @@ class Shape(object):
         tree.find('xacro:property[@name="mass"]', namespaces).set("value", str(self.mass))
         tree.find('xacro:property[@name="mu"]', namespaces).set("value", str(self.mu))
         tree.find('xacro:property[@name="mu2"]', namespaces).set("value", str(self.mu2))
+        tree.find('xacro:property[@name="ef"]', namespaces).set("value", str(self.ef))
    
         return tree
     
@@ -99,8 +106,8 @@ class Shape(object):
         self.mu2 = self.mu
     
 class Box(Shape):
-    def __init__(self, length=0, width=0, height=0, mass=10, x=0, y=0, z=0, r=0, p=0, ya=0, static=True, mu=1.0, mu2=1.0):
-        super(Box, self).__init__(mass, x, y, z, mu, mu2, r, p, ya, static)
+    def __init__(self, ef, length=0, width=0, height=0, mass=10, x=0, y=0, z=0, r=0, p=0, ya=0, static=True, mu=1.0, mu2=1.0):
+        super(Box, self).__init__(mass, x, y, z, mu, mu2, r, p, ya, static, ef)
         self.name = "Box"
 
         self.length = length
@@ -128,8 +135,8 @@ class Box(Shape):
         tree.write("shape.urdf.xacro")
 
 class Sphere(Shape):
-    def __init__(self, radius=0, mass=10, x=0, y=0, z=0, r=0, p=0, ya=0, static=True, mu=1.0, mu2=1.0):
-        super(Sphere, self).__init__(mass, x, y, z, mu, mu2, r, p, ya, static)
+    def __init__(self, ef, radius=0, mass=10, x=0, y=0, z=0, r=0, p=0, ya=0, static=True, mu=1.0, mu2=1.0):
+        super(Sphere, self).__init__(mass, x, y, z, mu, mu2, r, p, ya, static, ef)
 
         self.name = "Sphere"
 
@@ -155,8 +162,8 @@ class Sphere(Shape):
         tree.write("shape.urdf.xacro")
 
 class Cylinder(Shape):
-    def __init__(self, radius=0, length=0, mass=10, x=0, y=0, z=0, r=0, p=0, ya=0, static=True, mu=1.0, mu2=1.0):
-        super(Cylinder, self).__init__(mass, x, y, z, mu, mu2, r, p, ya, static)
+    def __init__(self, ef, radius=0, length=0, mass=10, x=0, y=0, z=0, r=0, p=0, ya=0, static=True, mu=1.0, mu2=1.0):
+        super(Cylinder, self).__init__(mass, x, y, z, mu, mu2, r, p, ya, static, ef)
         
         self.name = "Cylinder"
         

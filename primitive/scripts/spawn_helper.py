@@ -10,7 +10,7 @@ class sim_control_handler():
     def __init__(self):
         self.primitives = []
         self.primitive_model_name = None
-
+        self.ef = None
         self.max_retry = 5
 
         # Proxies
@@ -54,6 +54,13 @@ class sim_control_handler():
         self.primitive_pose = Pose(position=pos, orientation=ori)
         self.primitive_tf.transform.rotation = ori
 
+    def update_ef(self, shape):
+        # Set name
+        self.ef = shape.__class__.__name__ + "_ef"
+        
+        # Set child frame
+        self.primitive_tf.child_frame_id = self.ef
+
     def pub_primitive_tf(self):
         self.primitive_tf_bcaster.sendTransform(self.primitive_tf)
 
@@ -67,6 +74,14 @@ class sim_control_handler():
         self.primitives = []
         self.primitive_spawned = False
 
+    def delete_ef(self):
+        rospy.loginfo("deleting end effector...")
+        self.delete_model_req.model_name = self.ef
+        self.delete_model_proxy(self.delete_model_req)
+        rospy.loginfo("finished deleting end effector")
+
+        self.ef = None
+    
     def spawn_model(self):
         rospy.loginfo("spawning shape...")
         
@@ -86,8 +101,29 @@ class sim_control_handler():
 
         self.pub_primitive_tf()
 
+    def swap_ef(self):
+        rospy.loginfo("swaping end effector...")
+
+        # Parse xacro
+        xacro_file = "shape.urdf.xacro"
+        doc = xacro.parse(open(xacro_file))
+        xacro.process_doc(doc)
+        description_xml = doc.toxml()
+        self.spawn_model_req.model_xml = description_xml
+
+        self.spawn_model_req.model_name = self.ef 
+        
+        self.spawn_model_proxy(self.spawn_model_req)
+
+        rospy.loginfo("finished swaping end effector")
+
+        self.pub_primitive_tf()
+    
     def update_prim_spawned(self, state):
         self.primitive_spawned = state
+
+    def update_ef_spawned(self, state):
+        self.ef = state
 
     def pause_sim(self):
         rospy.loginfo("PAUSING service found...")

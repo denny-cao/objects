@@ -1,5 +1,6 @@
 int8 amount
 bool static
+bool swap
 ---
 bool success
 string error

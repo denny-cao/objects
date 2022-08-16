@@ -6,12 +6,14 @@ from random import choice
 import rospy
 from primitive_msgs.srv import Spawn, SpawnRequest, SpawnResponse
 from gazebo_msgs.msg import LinkStates
+from std_msgs.msg import Bool
 
 class SpawnShape:
     def __init__(self):
         self.shape = None
         self.spawner = sim_control_handler()
         self.number = None
+        self.ef = None
 
     def rand_shape(self, msg, static):
         # Generate random primitive
@@ -27,7 +29,13 @@ class SpawnShape:
             
         self.spawner.spawn_model()
 
+    def swap(self):
+        self.ef = choice([Box(static=True, ef=True), Sphere(static=True, ef=True), Cylinder(static=True, ef=True)])
 
+        self.spawner.update_ef(self.shape)
+
+        self.spawner.swap_ef()
+        
     def spawn_cb(self, req):     
         if self.spawner.primitive_spawned:  
             self.spawner.pause_sim()  
@@ -35,7 +43,13 @@ class SpawnShape:
             self.spawner.delete_models()
             self.number = 0
 
-            self.spawner.unpause_sim()
+        if self.spawner.ef:
+            self.spawner.pause_sim()
+
+            self.spawner.delete_ef()
+            self.ef = None
+
+        self.spawner.unpause_sim()
 
         link_states = rospy.wait_for_message("/gazebo/link_states", LinkStates)
 
@@ -48,6 +62,10 @@ class SpawnShape:
 
         self.spawner.update_prim_spawned(True)
 
+        if req.swap:
+            self.swap
+            self.spawner.update_ef_spawned(True)
+        
         response = SpawnResponse()
         response.success = True
 
@@ -55,11 +73,12 @@ class SpawnShape:
 
         return response
 
+
 if __name__ == "__main__":
     spawn = SpawnShape()
     rospy.init_node("spawner")
 
-    service = rospy.Service("spawn_amount", Spawn, spawn.spawn_cb)
+    spawn_service = rospy.Service("spawn_amount", Spawn, spawn.spawn_cb)
 
     rospy.spin()
     
